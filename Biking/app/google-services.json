@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "190651132018",
+    "firebase_url": "https://biking-82096.firebaseio.com",
+    "project_id": "biking-82096",
+    "storage_bucket": "biking-82096.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190651132018:android:8ffde69e77572c97f3baeb",
+        "android_client_info": {
+          "package_name": "cau.injiyong.biking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190651132018-07ee1tb6ef07l1cdn4faseqj8aamr78e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlSMQvTVOayptaRBJMs_28Xj4CgDSAFU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190651132018-07ee1tb6ef07l1cdn4faseqj8aamr78e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
