@@ -39,4 +39,8 @@ dependencies {
 
     //데이터베이스
     implementation 'com.google.firebase:firebase-database:19.1.0'
+
+    //구글맵
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }
