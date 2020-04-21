@@ -46,4 +46,7 @@ dependencies {
     //구글맵
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    //위치정보
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
 }
