@@ -23,13 +23,13 @@ android:layout_height="match_parent">
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="404dp"
-            android:layout_marginTop="80dp"
+            android:layout_height="400dp"
+            android:layout_marginTop="50dp"
             android:src="@drawable/logo" />
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="100dp">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/login_button"
