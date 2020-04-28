@@ -14,10 +14,9 @@
         android:name="com.google.android.gms.maps.MapFragment" />
 
     <Button
-        android:text="장소검색"
+        android:text="편의 시설 찾기"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
+        android:layout_height="50dp"
         android:id="@+id/button"/>
 
 </LinearLayout>

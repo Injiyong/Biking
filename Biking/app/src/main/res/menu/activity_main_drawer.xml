@@ -10,9 +10,8 @@
             android:title="메인 화면" />
         <item
             android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_star_black_24dp"
-            android:iconTint="#2ecc71"
-            android:title="편의 시설 찾기" />
+            android:icon="@drawable/ic_timer"
+            android:title="속도계" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_list"
