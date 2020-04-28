@@ -45,7 +45,6 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import cau.injiyong.biking.MainActivity;
 import cau.injiyong.biking.R;
 import noman.googleplaces.NRPlaces;
 import noman.googleplaces.PlaceType;
@@ -81,7 +80,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationRequest locationRequest;
-    private Location location;
+    public static Location location;
 
 
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요

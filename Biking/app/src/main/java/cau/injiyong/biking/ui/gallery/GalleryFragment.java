@@ -1,34 +1,34 @@
 package cau.injiyong.biking.ui.gallery;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import cau.injiyong.biking.R;
+import cau.injiyong.biking.ui.home.HomeFragment;
 
 public class GalleryFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private Location mLastlocation = null;
+    private TextView tvGetSpeed, tvCalSpeed, tvTime, tvLastTime, tvGpsEnable, tvTimeDif, tvDistDif;
+    private double speed;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+        tvGetSpeed = (TextView)root.findViewById(R.id.tvGetSpeed);
+
+        double getSpeed = Double.parseDouble(String.format("%.3f", HomeFragment.location.getSpeed()));
+        tvGetSpeed.setText(": " + getSpeed);  //Get Speed
+
         return root;
     }
 }

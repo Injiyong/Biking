@@ -1,19 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/layout_map"
+    >
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="30dp"
+        android:layout_marginTop="20dp"
+        android:text="GPS Speed Test"
+        android:id="@+id/tvTitle"/>
 
     <TextView
-        android:id="@+id/text_gallery"
-        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="GPS Enable " android:id="@+id/tvGpsEnableLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvGpsEnable"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="Get Speed " android:id="@+id/tvGetSpeedLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvGetSpeed"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="Cal Speed " android:id="@+id/tvCalSpeedLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvCalSpeed"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="Time " android:id="@+id/tvTimeLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvTime"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="Last Time " android:id="@+id/tvLastTimeLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvLastTime"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="시간 간격 " android:id="@+id/tvTimeDifLabel" android:layout_gravity="right"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text=":" android:id="@+id/tvTimeDif"/>
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textSize="25dp" android:text="거리 간격 " android:id="@+id/tvDistDifLabel" android:layout_gravity="right"/>
+
+
+</LinearLayout>
