@@ -10,7 +10,14 @@
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="0.0dip"
-        android:layout_weight="8"
+        android:layout_weight="0.8"
         android:name="com.google.android.gms.maps.MapFragment" />
+
+    <Button
+        android:text="장소검색"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:id="@+id/button"/>
 
 </LinearLayout>

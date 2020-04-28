@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,7 +29,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -37,22 +36,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import cau.injiyong.biking.MainActivity;
 import cau.injiyong.biking.R;
+import noman.googleplaces.NRPlaces;
+import noman.googleplaces.PlaceType;
+import noman.googleplaces.PlacesListener;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class HomeFragment extends Fragment implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback{
+import noman.googleplaces.Place;
+import noman.googleplaces.PlacesException;
+
+public class HomeFragment extends Fragment implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, PlacesListener {
 
     private GoogleMap mMap;
     private Marker currentMarker = null;
@@ -80,12 +84,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
     private Location location;
 
 
-    private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요합니다.
-    // (참고로 Toast에서는 Context가 필요했습니다.)
+    private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요
+
+    List<Marker> previous_marker = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+        //편의시설 버튼**
+        previous_marker = new ArrayList<Marker>();
+
+        Button button = (Button) rootView.findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPlaceInformation(currentPosition);
+            }
+        });
+        //**
 
         mLayout = (View)getActivity().findViewById(R.id.layout_map);
         locationRequest = new LocationRequest()
@@ -192,7 +209,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
-
                 //현재 위치에 마커 생성하고 이동
                 setCurrentLocation(location, markerTitle, markerSnippet);
 
@@ -227,7 +243,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                 Log.d(TAG, "startLocationUpdates : 퍼미션 안가지고 있음");
                 return;
             }
-
 
             Log.d(TAG, "startLocationUpdates : call mFusedLocationClient.requestLocationUpdates");
 
@@ -272,9 +287,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
             mFusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
-
-
-
 
     public String getCurrentAddress(LatLng latlng) {
 
@@ -345,12 +357,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
     public void setDefaultLocation() {
 
-
         //디폴트 위치, Seoul
         LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
         String markerTitle = "위치정보 가져올 수 없음";
         String markerSnippet = "위치 퍼미션과 GPS 활성 요부 확인하세요";
-
 
         if (currentMarker != null) currentMarker.remove();
 
@@ -508,5 +518,68 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         }
     }
 
+    @Override
+    public void onPlacesFailure(PlacesException e) {
 
+    }
+
+    @Override
+    public void onPlacesStart() {
+
+    }
+
+    @Override
+    public void onPlacesSuccess(final List<Place> places) {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (noman.googleplaces.Place place : places) {
+
+                    LatLng latLng
+                            = new LatLng(place.getLatitude()
+                            , place.getLongitude());
+
+                    String markerSnippet = getCurrentAddress(latLng);
+
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(latLng);
+                    markerOptions.title(place.getName());
+                    markerOptions.snippet(markerSnippet);
+                    Marker item = mMap.addMarker(markerOptions);
+                    previous_marker.add(item);
+
+                }
+
+                //중복 마커 제거
+                HashSet<Marker> hashSet = new HashSet<Marker>();
+                hashSet.addAll(previous_marker);
+                previous_marker.clear();
+                previous_marker.addAll(hashSet);
+
+            }
+        });
+    }
+
+    @Override
+    public void onPlacesFinished() {
+
+    }
+
+    public void showPlaceInformation(LatLng location)
+    {
+        mMap.clear();//지도 클리어
+
+        if (previous_marker != null)
+            previous_marker.clear();//지역정보 마커 클리어
+
+        new NRPlaces.Builder()
+                .listener(this)
+                .key("AIzaSyDlSMQvTVOayptaRBJMs_28Xj4CgDSAFU4")
+                .latlng(location.latitude, location.longitude)//현재 위치
+                .radius(500) //500 미터 내에서 검색
+                .type(PlaceType.CONVENIENCE_STORE) //편의점
+                .build()
+                .execute();
+    }
 }
