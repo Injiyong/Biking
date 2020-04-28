@@ -13,6 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+<!--    <Button-->
+<!--    android:id="@+id/startRide"-->
+<!--    android:layout_marginTop="650dp"-->
+<!--    android:layout_marginLeft="90dp"-->
+<!--    android:layout_marginRight="90dp"-->
+<!--    android:layout_width="50dp"-->
+<!--    android:layout_height="50dp"-->
+<!--    android:text="시작" />-->
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
@@ -20,6 +28,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 

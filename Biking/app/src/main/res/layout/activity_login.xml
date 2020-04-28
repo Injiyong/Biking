@@ -8,10 +8,12 @@ android:layout_height="match_parent">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#2c3e50"
     tools:layout_editor_absoluteX="95dp"
     tools:layout_editor_absoluteY="-25dp">
 
     <!--    이미지뷰로 로고 넣기 -->
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,9 +21,15 @@ android:layout_height="match_parent">
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="404dp"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/logo" />
+
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="150dp">
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/login_button"
@@ -35,9 +43,9 @@ android:layout_height="match_parent">
                 android:id="@+id/custom_login"
                 android:layout_width="200dp"
                 android:layout_height="60dp"
+                android:layout_gravity="center"
                 android:backgroundTint="#ffffff"
                 android:drawableLeft="@drawable/google"
-                android:layout_gravity="center"
                 android:gravity="center|left"
                 android:text="     구글 로그인"
                 android:textStyle="bold">

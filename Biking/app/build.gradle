@@ -49,4 +49,6 @@ dependencies {
 
     //위치정보
     implementation 'com.google.android.material:material:1.1.0-alpha09'
+
+    compile 'com.github.bumptech.glide:glide:4.0.0'
 }

@@ -171,6 +171,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         //Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        String s = "";
+        s = acct.getId();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -180,6 +182,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
 
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            //intent.putExtra("GoogleID", s);
                             startActivity(intent);
                             finish();
                             progressDialog.dismiss();
