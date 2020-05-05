@@ -123,11 +123,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         //편의시설 버튼**
         previous_marker = new ArrayList<Marker>();
 
-        Button button = (Button) rootView.findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button button1 = (Button) rootView.findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showPlaceInformation(currentPosition);
+                showPlaceInformation(currentPosition, PlaceType.CONVENIENCE_STORE);
+            }
+        });
+        //**
+
+        //편의시설 버튼**
+        previous_marker = new ArrayList<Marker>();
+
+        Button button2 = (Button) rootView.findViewById(R.id.button2);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPlaceInformation(currentPosition, PlaceType.HOSPITAL);
+            }
+        });
+        //**
+
+        //편의시설 버튼**
+        previous_marker = new ArrayList<Marker>();
+
+        Button button3 = (Button) rootView.findViewById(R.id.button3);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPlaceInformation(currentPosition, PlaceType.BICYCLE_STORE);
             }
         });
         //**
@@ -259,7 +283,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                                     ex_point = latLng;
                                     Log.d(TAG, "polyLineLocResult : " + markerSnippet);
-                                    mMap.addPolyline(new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point));
+                                    PolylineOptions options = new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point);
+                                    mMap.addPolyline(options);
                                     ex_point = latLng;
 
                                     // 마커 설정.
@@ -848,7 +873,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
     }
 
-    public void showPlaceInformation(LatLng location)
+    public void showPlaceInformation(LatLng location, String placeType)
     {
         mMap.clear();//지도 클리어
 
@@ -859,9 +884,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                 .listener(this)
                 .key("AIzaSyDlSMQvTVOayptaRBJMs_28Xj4CgDSAFU4")
                 .latlng(location.latitude, location.longitude)//현재 위치
-                .radius(500) //500 미터 내에서 검색
-                .type(PlaceType.CONVENIENCE_STORE) //편의점
+                .radius(1000) //1000 미터 내에서 검색
+                .type(placeType) //편의시설
                 .build()
                 .execute();
+
+        //PlaceType.CONVENIENCE_STORE
     }
 }
