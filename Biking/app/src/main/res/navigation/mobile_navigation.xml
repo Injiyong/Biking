@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_slideshow" />
 
     <fragment
+        android:id="@+id/nav_weather"
+        android:name="cau.injiyong.biking.TodayWeatherFragment"
+        android:label="@string/menu_weather"
+        tools:layout="@layout/fragment_today_weather" />
+
+    <fragment
         android:id="@+id/nav_tools"
         android:name="cau.injiyong.biking.ui.tools.ToolsFragment"
         android:label="@string/menu_tools"
