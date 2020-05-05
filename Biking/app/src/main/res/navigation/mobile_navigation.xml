@@ -25,9 +25,9 @@
 
     <fragment
         android:id="@+id/nav_weather"
-        android:name="cau.injiyong.biking.TodayWeatherFragment"
+        android:name="cau.injiyong.biking.WeatherFragment"
         android:label="@string/menu_weather"
-        tools:layout="@layout/fragment_today_weather" />
+        tools:layout="@layout/fragment_weather" />
 
     <fragment
         android:id="@+id/nav_tools"

@@ -66,7 +66,6 @@ public class TodayWeatherFragment extends Fragment {
         txt_sunset = itemView.findViewById(R.id.txt_sunset);
         txt_pressure = itemView.findViewById(R.id.txt_pressure);
         txt_temperature = itemView.findViewById(R.id.txt_temperature);
-        txt_description = itemView.findViewById(R.id.txt_description);
         txt_date_time = itemView.findViewById(R.id.txt_date_time);
         txt_geo_coord = itemView.findViewById(R.id.txt_geo_coord);
         txt_wind = itemView.findViewById(R.id.txt_wind);
@@ -102,7 +101,6 @@ public class TodayWeatherFragment extends Fragment {
                                 // Load Information
                                 txt_wind.setText(new StringBuilder(String.valueOf(weatherResult.getWind().getSpeed())).append(" km/s ").append(String.valueOf(weatherResult.getWind().getDeg())).append("°"));
                                 txt_city_name.setText(weatherResult.getName());
-                                txt_description.setText(new StringBuilder("Weather in ").append(weatherResult.getName()).toString());
                                 txt_temperature.setText(new StringBuilder(String.valueOf(weatherResult.getMain().getTemp())).append("°C").toString());
                                 txt_date_time.setText(Common.convertUnixToDate(weatherResult.getDt()));
                                 txt_pressure.setText(new StringBuilder(String.valueOf(weatherResult.getMain().getPressure())).append(" hpa").toString());
