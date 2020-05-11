@@ -3,28 +3,79 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#fff"
     android:id="@+id/layout_map"
     >
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="0.0dip"
-        android:layout_weight="0.8"
-        android:name="com.google.android.gms.maps.MapFragment" />
+    <FrameLayout
+        android:id="@+id/fram_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:id="@+id/tv_timer_introduce"
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="주행 기록"
+            android:background="#00ff0000"
+            android:textColor="#2c3e50"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_timer"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:layout_below="@id/tv_timer_introduce"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="45dp"
+            android:textColor="#2c3e50"
+            android:text="주행시간 : 0 초" />
+
+        <TextView
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_distance"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:layout_marginTop="80dp"
+            android:layout_below="@id/tv_timer"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textColor="#2c3e50"
+            android:text="주행거리 : 0 m" />
+
 
     <LinearLayout
         android:layout_marginBottom="5dp"
         android:id="@+id/fragment_map2_LL_0"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
+        android:paddingTop="500dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         >
         <Button
             android:text="편의점"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginRight="40dp"
@@ -32,104 +83,78 @@
 
         <Button
             android:text="병원"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginRight="40dp"
             android:id="@+id/button2"/>
         <Button
             android:text="자전거 샵"
+            android:backgroundTint="#2c3e50"
+            android:textColor="#f1c40f"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:id="@+id/button3"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_marginBottom="5dp"
         android:id="@+id/fragment_map2_LL_1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingTop="500dp"
+        android:layout_marginBottom="80dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         >
         <Button
             android:id="@+id/btn_timer_start"
-            android:layout_width="80dp"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:layout_width="100dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
-            android:text="Start"/>
+
+            android:text="주행 시작"/>
 
         <Button
             android:id="@+id/btn_timer_finish"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
-            android:text="Stop"/>
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:text="주행 종료"/>
 
         <Button
             android:id="@+id/btn_timer_reset"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:text="Reset"
-            />
-
-        <Button
-            android:id="@+id/btn_riding_for_analysis"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:text="통계"
+            android:layout_marginRight="10dp"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:text="기록 초기화"
             />
+
+
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_timer_introduce"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="라이딩 기록"
-        android:textSize="30sp"/>
-
-    <TextView
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_timer"
-        android:textSize="20sp"
-        android:layout_below="@id/tv_timer_introduce"
-
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:text="주행시간 : 0 초" />
-
-    <TextView
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_distance"
-        android:textSize="20sp"
-        android:layout_below="@id/tv_timer"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:text="주행거리 : 0 m" />
-
-    <TextView
-
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_avg_speed"
-        android:textSize="20sp"
-        android:layout_below="@id/tv_distance"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:text="속도 : 0 m/s" />
 
 
+<!--    <TextView-->
+
+<!--        android:layout_gravity="center"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:id="@+id/tv_avg_speed"-->
+<!--        android:textSize="20sp"-->
+<!--        android:layout_below="@id/tv_distance"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:text="속도 : 0 m/s" />-->
+
+    </FrameLayout>
 </LinearLayout>

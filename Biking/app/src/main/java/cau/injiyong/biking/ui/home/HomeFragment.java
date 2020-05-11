@@ -113,6 +113,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
     LatLng ex_point;
     String f_lat;
     String f_long;
+    String f_time;
+    String s_lat;
+    String s_long;
+    String s_time;
+
 
     List<Marker> previous_marker = null;
 
@@ -159,7 +164,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         // 주행시작 ~~
         tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
         tv_distance = (TextView)rootView.findViewById(R.id.tv_distance);
-        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
+//        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
         Button btn_timer_start = (Button) rootView.findViewById(R.id.btn_timer_start);
         btn_timer_start.setOnClickListener(new View.OnClickListener() {
 
@@ -206,14 +211,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                         bef_long = longitude;
 
                         /* 시작 지점 경도, 위도 */
-                        String s_lat = String.valueOf(latitude);
-                        String s_long = String.valueOf(longitude);
+                        s_lat = String.valueOf(latitude);
+                        s_long = String.valueOf(longitude);
+
 
                         /* 시작 시간 */
                         long now = System.currentTimeMillis();
                         Date date = new Date(now);
                         SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                        String s_time = sdfNow.format(date);
+                        s_time = sdfNow.format(date);
                     }
 
                     /* 타이머를 위한 Handler */
@@ -228,11 +234,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                             tv_timer.setText("주행시간 : " + timer + " 초");
                             tv_distance.setText("주행거리 : "+sum_dist+ " m");
                             double getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
-                            tv_avg_speed.setText("속도 : "+getSpeed);
+//                            tv_avg_speed.setText("속도 : "+getSpeed);
                             //tv_avg_speed.setText("평균 속도 : "+avg_speed+" m/s");
 
-                            /* 3초 마다 GPS를 찍기 위한 소스*/
-                            if (timer % 3 == 0) {
+                            /* 6초 마다 GPS를 찍기 위한 소스*/
+                            if (timer % 6 == 0) {
                                 //GpsInfo gps = new GpsInfo(getActivity());
                                 // GPS 사용유무 가져오기
                                 if (checkLocationServicesStatus()) {
@@ -283,17 +289,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                                     ex_point = latLng;
                                     Log.d(TAG, "polyLineLocResult : " + markerSnippet);
+
                                     PolylineOptions options = new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point);
                                     mMap.addPolyline(options);
                                     ex_point = latLng;
 
-                                    // 마커 설정.
-                                    MarkerOptions optFirst = new MarkerOptions();
-                                    optFirst.alpha(0.5f);
-                                    optFirst.anchor(0.5f, 0.5f);
-                                    optFirst.position(latLng);// 위도 • 경도
-                                    optFirst.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                                    mMap.addMarker(optFirst).showInfoWindow();
+//                                    // 마커 설정.
+//                                    MarkerOptions optFirst = new MarkerOptions();
+//                                    optFirst.alpha(0.5f);
+//                                    optFirst.anchor(0.5f, 0.5f);
+//                                    optFirst.position(latLng);// 위도 • 경도
+//                                    optFirst.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                                    mMap.addMarker(optFirst).showInfoWindow();
                                 }
                             }
                         }
@@ -407,7 +414,66 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         });
         // ~~주행 종료
 
-        mLayout = (View)getActivity().findViewById(R.id.layout_map);
+        // 기록 초기화 ~~
+        Button btn_timer_reset = (Button)rootView.findViewById(R.id.btn_timer_reset);
+        btn_timer_reset.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                if (view.getId() == R.id.btn_timer_reset) {
+
+                    /* 체킹 변수 설정*/
+                    isReset = true;
+
+                    /* 시작되어 있는 상태에서 종료시킬 경우 */
+                    if (isBtnClickStart == true) {
+                        Toast.makeText(getActivity(), "타이머를 Stop버튼으로 종료시켜주세요", Toast.LENGTH_SHORT).show();
+                    }else {
+                        /* 체킹 변수 설정*/
+                        isBtnClickStart = false;
+
+                        Toast.makeText(getActivity(), "타이머를 리셋합니다.", Toast.LENGTH_SHORT).show();
+
+                        /** 초기화 */
+                        timer = 0; // 총 라이딩 시간(타이머) 초기화
+//                        avg_speed = 0; // 평균 속도 초기화
+                        sum_dist = 0;// 총 라이딩 거리
+                        s_lat = "";
+                        s_long = "";
+                        s_time = ""; // 시작 지점 GPS 정보 초기화
+                        f_lat = "";
+                        f_long = "";
+                        f_time = ""; // 종료 지점 GPS 정보 초기화
+
+                        /* 텍스트 뷰 갱신*/
+                        tv_timer.setText("주행시간 : " + timer + " 초");
+//                        tv_avg_speed.setText("평균 속도 : " + avg_speed + " m/s");
+                        tv_distance.setText("주행거리 : " + sum_dist + " m");
+
+//                        /* ProgressDialog 시작 */
+//                        mProgressDialog.setMessage("Reset ...");
+//                        handler = new Handler();
+//                        mProgressDialog.setCancelable(false);
+//                        mProgressDialog.show();
+//                        handler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+//                                    mProgressDialog.dismiss();
+//                                }
+//                            }
+//                        }, 1000);
+
+                    }
+
+                }
+
+            }
+
+        });
+        // ~~ 기록 초기화
+
+       mLayout = (View)getActivity().findViewById(R.id.layout_map);
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
