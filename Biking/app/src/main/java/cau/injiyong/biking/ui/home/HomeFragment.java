@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -45,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -224,6 +226,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                     /* 타이머를 위한 Handler */
 
+
+
                     time_handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
@@ -236,7 +240,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                             double getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
 //                            tv_avg_speed.setText("속도 : "+getSpeed);
                             //tv_avg_speed.setText("평균 속도 : "+avg_speed+" m/s");
+                            List <LatLng> arrayPoints = new LinkedList<LatLng>();
 
+
+                            if(timer % 3 ==0){
+
+                                double latitude = location.getLatitude(); // 위도
+                                double longitude = location.getLongitude(); // 경도
+                                LatLng latLng = new LatLng(latitude, longitude);
+                                arrayPoints.add(latLng);
+
+
+                            }
                             /* 6초 마다 GPS를 찍기 위한 소스*/
                             if (timer % 6 == 0) {
                                 //GpsInfo gps = new GpsInfo(getActivity());
@@ -284,14 +299,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                                     /* 이전과 현재의 point로 폴리 라인을 긋는다*/
                                     current_point = latLng;
+
                                     String markerSnippet = "위도:" + String.valueOf(current_point)
                                             + " 경도:" + String.valueOf(ex_point);
 
-                                    ex_point = latLng;
                                     Log.d(TAG, "polyLineLocResult : " + markerSnippet);
 
-                                    PolylineOptions options = new PolylineOptions().color(0xFFFF0000).width(30.0f).geodesic(true).add(latLng).add(ex_point);
+
+                                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(3).add(latLngCur).add(latLngBef);
                                     mMap.addPolyline(options);
+
+//                                    PolylineOptions polylineOptions = new PolylineOptions();
+//                                    polylineOptions.color(0xFFFF0000);
+//                                    polylineOptions.width(5);
+//                                    polylineOptions.addAll(arrayPoints);
+//                                    mMap.addPolyline(polylineOptions);
+
                                     ex_point = latLng;
 
 //                                    // 마커 설정.
@@ -473,7 +496,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         });
         // ~~ 기록 초기화
 
-       mLayout = (View)getActivity().findViewById(R.id.layout_map);
+        mLayout = (View)getActivity().findViewById(R.id.layout_map);
         locationRequest = new LocationRequest()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(UPDATE_INTERVAL_MS)
