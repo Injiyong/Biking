@@ -166,7 +166,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         // 주행시작 ~~
         tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
         tv_distance = (TextView)rootView.findViewById(R.id.tv_distance);
-//        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
+
+        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
         Button btn_timer_start = (Button) rootView.findViewById(R.id.btn_timer_start);
         btn_timer_start.setOnClickListener(new View.OnClickListener() {
 
@@ -190,7 +191,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                     isBtnClickStart = true;
 
                     // GPS 설정
-                    //GpsInfo gps = new GpsInfo(getActivity());
+                    // GpsInfo gps = new GpsInfo(getActivity());
                     // GPS 사용유무 가져오기
                     if (checkLocationServicesStatus()) {
                         /* 첫 시작 지점*/
@@ -238,7 +239,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
                             tv_timer.setText("주행시간 : " + timer + " 초");
                             tv_distance.setText("주행거리 : "+sum_dist+ " m");
                             double getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
-//                            tv_avg_speed.setText("속도 : "+getSpeed);
+                            // tv_avg_speed.setText("속도 : "+getSpeed);
                             //tv_avg_speed.setText("평균 속도 : "+avg_speed+" m/s");
                             List <LatLng> arrayPoints = new LinkedList<LatLng>();
 
@@ -274,7 +275,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
 
                                     /* 이전의 GPS 정보와 현재의 GPS 정보로 거리를 구한다.*/
                                     calDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long); // 거리계산하는 클래스 호출
-                                    double dist = calDistance.getDistance();
+                                    double dist = calDistance.getDistance(); // m
+                                    if(dist>1.7)
+                                        tv_avg_speed.setText("속도 : "+getSpeed);
+                                    if(getSpeed>0.2)
+                                        tv_distance.setText("주행거리 : "+sum_dist+ " m");
                                     dist = (int)(dist * 100) / 100.0; // 소수점 둘째 자리 계산
                                     sum_dist += dist;
 
@@ -659,7 +664,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback, Activi
         Log.d(TAG, "onStart");
 
         if (checkPermission()) {
-
+            long minTime=1000;
+            float minDistance=1;
             Log.d(TAG, "onStart : call mFusedLocationClient.requestLocationUpdates");
             mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
 

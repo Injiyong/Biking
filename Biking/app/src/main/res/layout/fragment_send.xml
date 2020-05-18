@@ -1,19 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fff"
+    android:id="@+id/layout_map"
+    >
 
-    <TextView
-        android:id="@+id/text_send"
+    <FrameLayout
+        android:id="@+id/frame_map"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent"
+        >
+
+        <com.skt.Tmap.TMapView
+            android:id="@+id/tmapmap"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/tv_timer_introduce"
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="주행 기록"
+            android:background="#00ff0000"
+            android:textColor="#2c3e50"
+            android:textSize="30sp"/>
+
+        <TextView
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_timer"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:layout_below="@id/tv_timer_introduce"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="45dp"
+            android:textColor="#2c3e50"
+            android:text="주행시간 : 0 초" />
+
+        <TextView
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_distance"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:layout_marginTop="80dp"
+            android:layout_below="@id/tv_timer"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textColor="#2c3e50"
+            android:text="주행거리 : 0 m" />
+
+
+        <LinearLayout
+            android:layout_marginBottom="5dp"
+            android:id="@+id/fragment_map2_LL_0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingTop="500dp"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
+            >
+            <Button
+                android:text="편의점"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="40dp"
+                android:id="@+id/btn_convenienceStore"/>
+
+            <Button
+                android:text="병원"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_marginRight="40dp"
+                android:id="@+id/btn_hospital"/>
+            <Button
+                android:text="자전거 샵"
+                android:backgroundTint="#2c3e50"
+                android:textColor="#f1c40f"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:id="@+id/btn_bicycleShop"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fragment_map2_LL_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="500dp"
+            android:layout_marginBottom="80dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            >
+            <Button
+                android:id="@+id/btn_timer_start"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+
+                android:text="주행 시작"/>
+
+            <Button
+                android:id="@+id/btn_timer_finish"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:text="주행 종료"/>
+
+            <Button
+                android:id="@+id/btn_timer_reset"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="10dp"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:text="기록 초기화"
+                />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_Demo"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:text="도착지"
+            />
+
+    </FrameLayout>
+</LinearLayout>
