@@ -57,7 +57,22 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:textColor="#2c3e50"
-            android:text="주행거리 : 0 m" />
+            android:text="주행거리 : 0 km" />
+
+        <TextView
+            android:layout_gravity="center|top"
+            android:gravity="center|top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_avg_speed"
+            android:background="#00ff0000"
+            android:textSize="20sp"
+            android:layout_marginTop="115dp"
+            android:layout_below="@id/tv_timer"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:textColor="#2c3e50"
+            android:text="평균속도 : 0 km/h" />
 
 
         <LinearLayout

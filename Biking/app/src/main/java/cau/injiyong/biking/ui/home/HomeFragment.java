@@ -86,6 +86,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     private Handler time_handler;
     int timer;
     CalDistance calDistance;
+    double avg_speed;
     double bef_lat;
     double bef_long;
     double sum_dist;
@@ -139,6 +140,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View v) { StartGuidance(); }});
 
+
+
         /* 다인주행 시작 */
         // 주행시작 ~~
         tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
@@ -151,19 +154,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View view) {
                 if (view.getId() == R.id.btn_timer_start) {
-                    Log.d("hmmmm","1");
+
                     if(isReset == false) { // false  초기화 유도, true  진행
-                        Log.d("hmmmm","20");
                         Toast.makeText(getActivity(), "Reset으로 초기화 해주세요.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (isBtnClickStart == true) { // 시작 버튼이 눌렸는데 유저가 다시 한번 누른 경우
-                        Log.d("hmmmm","22");
                         Toast.makeText(getActivity(), "이미 시작되었습니다.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    Log.d("hmmmm","2");
                     // 타이머를 시작한다.
                     Toast.makeText(getActivity(), "타이머를 시작합니다.", Toast.LENGTH_SHORT).show();
 
@@ -174,16 +174,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     // GPS 설정
                     // GpsInfo gps = new GpsInfo(getActivity());
                     // GPS 사용유무 가져오기
-                    Log.d("hmmmm","3");
                     if (location!=null) {
                         /* 첫 시작 지점*/
-                        Log.d("hmmmm","4");
                         Log.d("GPS사용", "찍힘" + timer);
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         LatLng latLng = new LatLng(latitude, longitude);
 
-                        Log.d("hmmmm","5");
                         // 마커 설정.
 //                        MarkerOptions optFirst = new MarkerOptions();
 //                        optFirst.alpha(0.5f);
@@ -225,35 +222,21 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     time_handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
-                            Log.d("hmmmm","6");
                             time_handler.sendEmptyMessageDelayed(0, 1000); // 1초 간격으로
                             timer++; // Timer 증가
 
                             /* Text View 갱신*/
                             tv_timer.setText("주행시간 : " + timer + " 초");
-                            tv_distance.setText("주행거리 : "+sum_dist+ " m");
+                            tv_distance.setText("주행거리 : "+sum_dist+ " km");
                             double getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
                             // tv_avg_speed.setText("속도 : "+getSpeed);
-                            //tv_avg_speed.setText("평균 속도 : "+avg_speed+" m/s");
-//                            List<LatLng> arrayPoints = new LinkedList<LatLng>();
-//
-//
-//                            if(timer % 3 ==0){
-//
-//                                double latitude = location.getLatitude(); // 위도
-//                                double longitude = location.getLongitude(); // 경도
-//                                LatLng latLng = new LatLng(latitude, longitude);
-//                                arrayPoints.add(latLng);
-//
-//
-//                            }
+                            tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
+
                             /* 6초 마다 GPS를 찍기 위한 소스*/
                             if (timer % 6 == 0) {
-                                Log.d("hmmmm","7");
                                 //GpsInfo gps = new GpsInfo(getActivity());
                                 // GPS 사용유무 가져오기
                                 if (location!=null) {
-                                    Log.d("hmmmm","8");
                                     Log.d("GPS사용", "찍힘 : " + timer);
                                     double latitude = location.getLatitude(); // 위도
                                     double longitude = location.getLongitude(); // 경도
@@ -267,23 +250,18 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     String markerSnippet2 = "bef" + String.valueOf(latLngBef)
                                             + " cur:" + String.valueOf(latLngCur);
 
-                                    Log.d("hmmmm","9");
                                     Log.d(TAG, "calDistResult : " + markerSnippet2);
 
                                     /* 이전의 GPS 정보와 현재의 GPS 정보로 거리를 구한다.*/
                                     calDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long); // 거리계산하는 클래스 호출
-                                    double dist = calDistance.getDistance(); // m
-                                    if(dist>1.7)
-                                        tv_avg_speed.setText("속도 : "+getSpeed);
-                                    if(getSpeed>0.2)
-                                        tv_distance.setText("주행거리 : "+sum_dist+ " m");
+                                    double dist = calDistance.getDistance()*0.001; // m
                                     dist = (int)(dist * 100) / 100.0; // 소수점 둘째 자리 계산
                                     sum_dist += dist;
 
 
                                     /* 평균 속도 계산하기 */
-                                    //avg_speed = dist/timer;
-                                    //avg_speed = (int)(avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
+                                    avg_speed = dist/timer;
+                                    avg_speed = (int)(avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
 
 
                                     /* 이전의 GPS 정보를 현재의 GPS 정보로 변환한다. */
@@ -300,7 +278,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     // Map 을 zoom 합니다.
                                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                                     // tmapview.setZoomLevel(15);
-                                    Log.d("hmmmm","10");
+
 
                                     /* 이전과 현재의 point로 폴리 라인을 긋는다*/
                                     current_point = latLng;
@@ -311,7 +289,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     Log.d(TAG, "polyLineLocResult : " + markerSnippet);
 
 
-                                    Log.d("hmmmm","11");
 //                                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(3).add(latLngCur).add(latLngBef);
 //                                    mMap.addPolyline(options);
 //                                    ArrayList<TMapPoint> alTMapPoint = new ArrayList<TMapPoint>();
@@ -325,7 +302,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     tMapPolyLine.addLinePoint(new TMapPoint(latitude,longitude));
                                     tmapview.addTMapPolyLine("Line1", tMapPolyLine);
 
-                                    Log.d("hmmmm","12");
+
 //                                    PolylineOptions polylineOptions = new PolylineOptions();
 //                                    polylineOptions.color(0xFFFF0000);
 //                                    polylineOptions.width(5);
@@ -527,7 +504,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                         /** 초기화 */
                         timer = 0; // 총 라이딩 시간(타이머) 초기화
-//                        avg_speed = 0; // 평균 속도 초기화
+                        avg_speed = 0; // 평균 속도 초기화
                         sum_dist = 0;// 총 라이딩 거리
                         s_lat = "";
                         s_long = "";
