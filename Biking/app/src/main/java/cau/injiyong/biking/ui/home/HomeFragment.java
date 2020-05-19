@@ -120,6 +120,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         Common.current_location=location;  /* 날씨에 위치 넘겨주는 코드 */
 
+        Button button_myBicycle = (Button) rootView.findViewById(R.id.btn_myBicycle);
+        button_myBicycle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { MyBicycle(); }});
+
         Button button_searchAround = (Button) rootView.findViewById(R.id.btn_searchAround);
         button_searchAround.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -586,6 +591,35 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tmapview.setTrackingMode(true);
         //tmapview.setLocationPoint(location.getLongitude(), location.getLatitude());
         tmapview.setLocationPoint(126.985302, 37.570841);
+    }
+
+    /* 자전거 주차위치 메소드*/
+    public void MyBicycle() {
+        Toast.makeText(getContext(), "자전거 주차위치를 터치해주세요", Toast.LENGTH_SHORT).show();
+
+        tmapview.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
+            @Override
+            public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList,
+                                        ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+
+                TMapMarkerItem markerBicycle = new TMapMarkerItem();
+                Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.bicycle_icon);
+                markerBicycle.setIcon(bitmap); // 마커 아이콘 지정
+                markerBicycle.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                markerBicycle.setTMapPoint(tMapPoint); // 마커의 좌표 지정
+                markerBicycle.setName("내 자전거 위치"); // 마커의 타이틀 지정
+                tmapview.addMarkerItem("markerBicycle", markerBicycle); // 지도에 마커 추가
+
+                return false;
+            }
+
+            @Override
+            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList,
+                                          ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+                Destination_Point = tMapPoint;
+                return false;
+            }
+        });
     }
 
     /* 주변 검색 메소드 */
