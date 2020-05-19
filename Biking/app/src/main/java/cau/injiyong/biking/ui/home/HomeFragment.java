@@ -27,9 +27,16 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import cau.injiyong.biking.CalDistance;
+import cau.injiyong.biking.Common.Common;
 import cau.injiyong.biking.R;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapMarkerItem;
@@ -93,6 +100,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String s_time;
     /* 다인변수 끝 */
 
+    String userID;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    FirebaseAuth mAuth;
+    String total_dist;
+    String total_time;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -101,6 +115,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         setGps();
         setMap();
+
+        Common.current_location=location;  /*날씨에 위치 넘겨주는 코드*/
 
         Button button_search = (Button) rootView.findViewById(R.id.btn_search);
         button_search.setOnClickListener(new View.OnClickListener() {
@@ -154,6 +170,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         LatLng latLng = new LatLng(latitude, longitude);
+
+
 
                         // 마커 설정.
 //                        MarkerOptions optFirst = new MarkerOptions();
@@ -334,6 +352,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             double longitude = location.getLongitude();
                             LatLng latLng = new LatLng(latitude, longitude);
 
+
                             // 마커 설정.
 //                            MarkerOptions optFirst = new MarkerOptions();
 //                            optFirst.alpha(0.5f);
@@ -359,7 +378,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             long now = System.currentTimeMillis();
                             Date date = new Date(now);
                             SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//                            f_time = sdfNow.format(date);
+                            f_time = sdfNow.format(date);
                         }
 
                         Toast.makeText(getActivity(), "주행을 종료합니다.", Toast.LENGTH_SHORT).show();
@@ -369,6 +388,48 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                         /* Checking 변수 */
                         isBtnClickStart = false;
+
+                        /*firebase database 주행 기록 보내기*/
+                        mAuth = FirebaseAuth.getInstance();
+                        database = FirebaseDatabase.getInstance();
+                        myRef = database.getReference("USER_ID");
+
+                        userID=mAuth.getUid();
+
+                        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
+                                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
+                                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
+
+                                if (total_dist.equals("null")) {//데이터 없을 때
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist);
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer);
+                                }
+                                else{//데이터 있으면 최근 기록과 더해서 update
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist+Float.parseFloat(total_dist));
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer+Integer.parseInt(total_time));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+
+                        //최근 주행 기록 정보 넘기는 부분
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작시간").push().setValue(s_time);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료시간").push().setValue(f_time);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작위도").push().setValue(s_lat);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작경도").push().setValue(s_long);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료위도").push().setValue(f_lat);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료경도").push().setValue(f_long);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("주행거리").push().setValue(sum_dist);
+                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("주행시간").push().setValue(timer);
+
+                        /*firebase database 주행 기록 보내기-끝*/
 
 //                        /** 최종 정보 Log 찍기*/
 //                        Log.d("최종 라이딩 정보", "총 라이딩 시간 : " + timer + " 총 라이딩 거리 :" + sum_dist);
