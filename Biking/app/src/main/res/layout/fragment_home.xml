@@ -72,6 +72,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             >
+
             <Button
                 android:text="위치검색"
                 android:textColor="#f1c40f"
@@ -138,16 +139,25 @@
                 />
 
         </LinearLayout>
-
         <Button
-            android:id="@+id/btn_Demo"
+            android:id="@+id/btn_myBicycle"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:layout_marginRight="10dp"
             android:textColor="#f1c40f"
             android:backgroundTint="#2c3e50"
-            android:text="도착지"
+            android:text="주차위치"
             />
+
+        <Button
+            android:text="주변검색"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:layout_marginTop="40dp"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="40dp"
+            android:id="@+id/btn_searchAround"/>
 
     </FrameLayout>
 </LinearLayout>

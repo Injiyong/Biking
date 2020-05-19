@@ -48,6 +48,7 @@ import com.skt.Tmap.TMapView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.LogManager;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
@@ -116,7 +117,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         setGps();
         setMap();
 
-        Common.current_location=location;  /*날씨에 위치 넘겨주는 코드*/
+        Common.current_location=location;  /* 날씨에 위치 넘겨주는 코드 */
+
+        Button button_searchAround = (Button) rootView.findViewById(R.id.btn_searchAround);
+        button_searchAround.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { SearchAround(); }});
 
         Button button_search = (Button) rootView.findViewById(R.id.btn_search);
         button_search.setOnClickListener(new View.OnClickListener() {
@@ -145,15 +151,19 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View view) {
                 if (view.getId() == R.id.btn_timer_start) {
+                    Log.d("hmmmm","1");
                     if(isReset == false) { // false  초기화 유도, true  진행
+                        Log.d("hmmmm","20");
                         Toast.makeText(getActivity(), "Reset으로 초기화 해주세요.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (isBtnClickStart == true) { // 시작 버튼이 눌렸는데 유저가 다시 한번 누른 경우
+                        Log.d("hmmmm","22");
                         Toast.makeText(getActivity(), "이미 시작되었습니다.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    Log.d("hmmmm","2");
                     // 타이머를 시작한다.
                     Toast.makeText(getActivity(), "타이머를 시작합니다.", Toast.LENGTH_SHORT).show();
 
@@ -164,15 +174,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     // GPS 설정
                     // GpsInfo gps = new GpsInfo(getActivity());
                     // GPS 사용유무 가져오기
-                    if (tmapgps!=null) {
+                    Log.d("hmmmm","3");
+                    if (location!=null) {
                         /* 첫 시작 지점*/
+                        Log.d("hmmmm","4");
                         Log.d("GPS사용", "찍힘" + timer);
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
                         LatLng latLng = new LatLng(latitude, longitude);
 
-
-
+                        Log.d("hmmmm","5");
                         // 마커 설정.
 //                        MarkerOptions optFirst = new MarkerOptions();
 //                        optFirst.alpha(0.5f);
@@ -214,6 +225,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     time_handler = new Handler() {
                         @Override
                         public void handleMessage(Message msg) {
+                            Log.d("hmmmm","6");
                             time_handler.sendEmptyMessageDelayed(0, 1000); // 1초 간격으로
                             timer++; // Timer 증가
 
@@ -237,9 +249,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 //                            }
                             /* 6초 마다 GPS를 찍기 위한 소스*/
                             if (timer % 6 == 0) {
+                                Log.d("hmmmm","7");
                                 //GpsInfo gps = new GpsInfo(getActivity());
                                 // GPS 사용유무 가져오기
-                                if (tmapgps!=null) {
+                                if (location!=null) {
+                                    Log.d("hmmmm","8");
                                     Log.d("GPS사용", "찍힘 : " + timer);
                                     double latitude = location.getLatitude(); // 위도
                                     double longitude = location.getLongitude(); // 경도
@@ -253,6 +267,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     String markerSnippet2 = "bef" + String.valueOf(latLngBef)
                                             + " cur:" + String.valueOf(latLngCur);
 
+                                    Log.d("hmmmm","9");
                                     Log.d(TAG, "calDistResult : " + markerSnippet2);
 
                                     /* 이전의 GPS 정보와 현재의 GPS 정보로 거리를 구한다.*/
@@ -280,11 +295,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                                     // Showing the current location in Google Map
                                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                                    tmapview.setCenterPoint(latitude, longitude, true);
+                                    //tmapview.setCenterPoint(latitude, longitude, true);
 
                                     // Map 을 zoom 합니다.
                                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                                    tmapview.setZoomLevel(15);
+                                    // tmapview.setZoomLevel(15);
+                                    Log.d("hmmmm","10");
 
                                     /* 이전과 현재의 point로 폴리 라인을 긋는다*/
                                     current_point = latLng;
@@ -295,6 +311,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     Log.d(TAG, "polyLineLocResult : " + markerSnippet);
 
 
+                                    Log.d("hmmmm","11");
 //                                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(3).add(latLngCur).add(latLngBef);
 //                                    mMap.addPolyline(options);
 //                                    ArrayList<TMapPoint> alTMapPoint = new ArrayList<TMapPoint>();
@@ -308,6 +325,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     tMapPolyLine.addLinePoint(new TMapPoint(latitude,longitude));
                                     tmapview.addTMapPolyLine("Line1", tMapPolyLine);
 
+                                    Log.d("hmmmm","12");
 //                                    PolylineOptions polylineOptions = new PolylineOptions();
 //                                    polylineOptions.color(0xFFFF0000);
 //                                    polylineOptions.width(5);
@@ -344,7 +362,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         //GPS 저장
                         // GpsInfo gps = new GpsInfo(getActivity());
                         // GPS 사용유무 가져오기
-                        if (tmapgps!=null) {
+                        if (location!=null) {
 
                             /* 첫 시작 지점*/
                             Log.d("GPS사용", "찍힘" + timer);
@@ -576,7 +594,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     /* 지도 설정 */
     public void setMap() {
         tmapview.setSKTMapApiKey("l7xx3ce387d7e7764c70ba53c4cddb6391eb");
-        //tmapview.setLocationPoint(location.getLongitude(), location.getLatitude());
 
         CurrentMarker = new TMapMarkerItem();
 
@@ -590,7 +607,51 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tmapview.setMapType(TMapView.MAPTYPE_STANDARD);
         tmapview.setCompassMode(true);
         tmapview.setTrackingMode(true);
-        tmapview.setLocationPoint(location.getLongitude(), location.getLatitude());
+        //tmapview.setLocationPoint(location.getLongitude(), location.getLatitude());
+        tmapview.setLocationPoint(126.985302, 37.570841);
+    }
+
+    /* 주변 검색 메소드 */
+    public void SearchAround() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("주변 검색");
+
+        final EditText input = new EditText(getContext());
+        builder.setView(input);
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String strData = input.getText().toString();
+                TMapData tMapData = new TMapData();
+                //TMapPoint tPoint = tmapview.getLocationPoint();
+                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+                tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
+                    @Override
+                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
+                        for(int i = 0; i < poiItem.size(); i++) {
+                            TMapPOIItem item = poiItem.get(i);
+
+                            TMapMarkerItem markerItem = new TMapMarkerItem();
+                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
+                            markerItem.setIcon(bitmap); // 마커 아이콘 지정
+                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
+                            markerItem.setName(strData); // 마커의 타이틀 지정
+                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+                            System.out.println(item.getPOIPoint());
+                        }
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
     }
 
     /* 도착지주소 검색 메소드 */

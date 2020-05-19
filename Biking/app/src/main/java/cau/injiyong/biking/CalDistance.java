@@ -6,7 +6,7 @@ package cau.injiyong.biking;
 
  */
 
-public class CalDistance{
+public class CalDistance {
 
     public double theta, dist;
 
