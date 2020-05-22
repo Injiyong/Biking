@@ -44,6 +44,11 @@ import com.skt.Tmap.TMapPOIItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
+import com.skt.Tmap.util.HttpConnect;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -754,6 +759,66 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 tmapview.addTMapPath(polyLine);
             }
         });
+
+        // 음성안내 data~~
+        tmapdata.findPathDataAllType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataAllListenerCallback() {
+            @Override
+            public void onFindPathDataAll(Document document) {
+                Element root = document.getDocumentElement();
+                NodeList nodeListPlacemark = root.getElementsByTagName("Placemark");
+
+                for( int i=0; i<nodeListPlacemark.getLength(); i++ ) {
+                    NodeList nodeListPlacemarkItem = nodeListPlacemark.item(i).getChildNodes();
+
+                    for(int a=0; a<nodeListPlacemarkItem.getLength(); a++ ){
+                        if(nodeListPlacemarkItem.item(a).getNodeName().equals("coordinates")){
+                            Log.d("debug", nodeListPlacemarkItem.item(a).getTextContent().trim() );
+                        }
+                    }
+                    for( int j=0; j<nodeListPlacemarkItem.getLength(); j++ ) {
+                        if( nodeListPlacemarkItem.item(j).getNodeName().equals("description") ) {
+                            Log.d("debug", nodeListPlacemarkItem.item(j).getTextContent().trim() );
+                        }
+                    }
+                    for( int k=0; k<nodeListPlacemarkItem.getLength(); k++ ) {
+                        if( nodeListPlacemarkItem.item(k).getNodeName().equals("tmap:turnType") ) {
+                            Log.d("debug turnType" + k, nodeListPlacemarkItem.item(k).getTextContent().trim() );
+                        }
+                    }
+                }
+
+                NodeList list = root.getElementsByTagName("Point"); // 노드 타입이 Ponit 일 때
+                ArrayList alTMapPoint = new ArrayList();
+                for(int i = 0; i < list.getLength(); ++i) {
+                    Element item = (Element) list.item(i);
+                    String str = HttpConnect.getContentFromNode(item, "coordinates");
+                    if (str != null) {
+
+                        String[] str2 = str.split(" ");
+                        for(int j = 0; j < str2.length; ++j) {
+                        try {
+                            String[] str3 = str.split(",");
+                            alTMapPoint.add(new TMapPoint(Double.parseDouble(str3[j + 1]), Double.parseDouble(str3[j])));
+                            Log.d("debug lat", str3[j+1]);Log.d("debug lon", str3[j]);
+//                            TMapMarkerItem markerItem = new TMapMarkerItem();
+//                            TMapPoint tMapPoint1 = new TMapPoint(Double.parseDouble(str3[j+1]),Double.parseDouble(str3[j]));
+//                            Bitmap startride = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.poi_dot);
+//                            markerItem.setIcon(startride); // 마커 아이콘 지정
+//                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+//                            markerItem.setTMapPoint( new TMapPoint(Double.parseDouble(str3[j + 1]), Double.parseDouble(str3[j]))); // 마커의 좌표 지정
+//                            markerItem.setName("turnType"+j); // 마커의 타이틀 지정
+//                            tmapview.addMarkerItem("markerItem", markerItem); // 지도에 마커 추가
+                        } catch (Exception e) {
+
+                        }
+                        }
+
+                    }
+                }
+            }
+
+        });
+        //// ~~ 음성안내 data
 
         Bitmap start = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.poi_start);
         Bitmap end = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.poi_end);
