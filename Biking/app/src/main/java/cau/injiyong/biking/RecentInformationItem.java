@@ -10,12 +10,14 @@ public class RecentInformationItem {
     private String f_long;
     private String sum_dist;
     private String timer;
+    private String s_adress;
+    private String f_adress;
 
     public RecentInformationItem (){
 
     }
 
-    public RecentInformationItem (String s_time,String f_time,String s_lat,String s_long,String f_lat,String f_long,String sum_dist, String timer)
+    public RecentInformationItem (String s_time,String f_time,String s_lat,String s_long,String f_lat,String f_long,String sum_dist, String timer, String s_adress,String f_adress)
     {
         this.s_time=s_time;
         this.f_time=f_time;
@@ -25,6 +27,8 @@ public class RecentInformationItem {
         this.f_long=f_long;
         this.sum_dist=sum_dist;
         this.timer=timer;
+        this.s_adress=s_adress;
+        this.f_adress=f_adress;
     }
 
     public String getS_time() {
@@ -88,6 +92,14 @@ public class RecentInformationItem {
 
     public void setTimer(String timer) {
         this.timer = timer;
+    }
+
+    public String getS_adress() {
+        return s_adress;
+    }
+
+    public String getF_adress() {
+        return f_adress;
     }
 }
 

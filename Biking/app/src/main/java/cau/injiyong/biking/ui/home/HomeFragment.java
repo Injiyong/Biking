@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -51,9 +53,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.LogManager;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -108,12 +113,15 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String s_time;
     /* 다인변수 끝 */
 
+
     String userID;
     FirebaseDatabase database;
     DatabaseReference myRef;
     FirebaseAuth mAuth;
     String total_dist;
     String total_time;
+    String s_adress;
+    String f_adress;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -423,10 +431,47 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
-                        });
+                        });;
 
+                        Geocoder geocoder= new Geocoder(getContext());
+                        List<android.location.Address> list = null;
+                        List<android.location.Address> list2 = null;
+                        try {
+                            //미리 구해놓은 위도값 mLatitude;
+                            //미리 구해놓은 경도값 mLongitude;
+
+                            list = geocoder.getFromLocation(
+                                    Double.valueOf(s_lat), // 위도
+                                    Double.valueOf(s_long), // 경도
+                                    1); // 얻어올 값의 개수
+                            list2 = geocoder.getFromLocation(
+                                    Double.valueOf(f_lat), // 위도
+                                    Double.valueOf(f_long), // 경도
+                                    1); // 얻어올 값의 개수
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.e("test", "입출력 오류");
+                        }
+                        if (list != null) {
+                            if (list.size()==0) {
+                                s_adress="해당되는 주소 정보는 없습니다";
+                            } else {
+                                s_adress=list.get(0).getAddressLine(0);
+                                Log.d("wldus",s_adress);
+                            }
+                        }
+                        if (list2 != null) {
+                            if (list2.size()==0) {
+                                f_adress="해당되는 주소 정보는 없습니다";
+                            } else {
+                                f_adress=list2.get(0).getAddressLine(0);
+                                Log.d("wldus",s_adress);
+                            }
+                        }
+
+                        Log.d("wldus",s_adress);
                         //최근 주행 기록 정보 넘기는 부분
-                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer));
+                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),s_adress,f_adress);
                         myRef.child(userID).child("RECENT_INFO").push().setValue(item);
 
                         /*firebase database 주행 기록 보내기-끝*/

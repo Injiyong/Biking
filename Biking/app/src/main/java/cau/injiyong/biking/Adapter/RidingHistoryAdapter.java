@@ -2,6 +2,7 @@ package cau.injiyong.biking.Adapter;
 
 
 import android.content.Context;
+import android.location.Geocoder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,8 +69,8 @@ public class RidingHistoryAdapter extends RecyclerView.Adapter<RidingHistoryAdap
         holder.date.setText(mDataset.get(position).getS_time());
         holder.time.setText(mDataset.get(position).getTimer()+"초");
         holder.distance.setText(mDataset.get(position).getSum_dist()+"km");
-        holder.startpos.setText(mDataset.get(position).getS_lat()+mDataset.get(position).getS_long());
-        holder.finishpos.setText(mDataset.get(position).getF_lat()+mDataset.get(position).getF_long());
+        holder.startpos.setText(mDataset.get(position).getS_adress());
+        holder.finishpos.setText(mDataset.get(position).getF_adress());
     }
 
     @Override
