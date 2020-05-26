@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="8dp"
+    app:cardUseCompatPadding="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="라이딩 날짜 :     "
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_riding_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2020년 5월 19일 19:47:15"
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="라이딩 시간 :     "
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_riding_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="32초"
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="라이딩 거리 :     "
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_riding_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0m"
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시작 위치    :      "
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_start_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="서울시 동작구 흑석동 339"
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="종료 위치    :      "
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_finish_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="서울시 동작구 흑석동 339"
+                android:layout_marginBottom="8dp"
+                android:textColor="#2c3e50"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

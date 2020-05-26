@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import cau.injiyong.biking.CalDistance;
 import cau.injiyong.biking.Common.Common;
 import cau.injiyong.biking.R;
+import cau.injiyong.biking.RecentInformationItem;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -425,16 +426,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         });
 
                         //최근 주행 기록 정보 넘기는 부분
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작시간").push().setValue(s_time);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료시간").push().setValue(f_time);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작위도").push().setValue(s_lat);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("시작경도").push().setValue(s_long);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료위도").push().setValue(f_lat);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("종료경도").push().setValue(f_long);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("주행거리").push().setValue(sum_dist);
-                        myRef.child(userID).child("RECENT_INFO").child(s_time).child("주행시간").push().setValue(timer);
+                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer));
+                        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
 
                         /*firebase database 주행 기록 보내기-끝*/
+
 
 //                        /** 최종 정보 Log 찍기*/
 //                        Log.d("최종 라이딩 정보", "총 라이딩 시간 : " + timer + " 총 라이딩 거리 :" + sum_dist);
