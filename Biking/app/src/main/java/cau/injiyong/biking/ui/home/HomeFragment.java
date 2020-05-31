@@ -103,6 +103,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     double sum_dist;
     double cur_lat;
     double cur_long;
+    double getSpeed;
     LatLng current_point;
     LatLng ex_point;
     String f_lat;
@@ -164,9 +165,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         /* 다인주행 시작 */
         // 주행시작 ~~
         tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
+        tv_timer.setVisibility(View.GONE);
         tv_distance = (TextView)rootView.findViewById(R.id.tv_distance);
-
+        tv_distance.setVisibility(View.GONE);
         tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
+        tv_avg_speed.setVisibility(View.GONE);
         Button btn_timer_start = (Button) rootView.findViewById(R.id.btn_timer_start);
         btn_timer_start.setOnClickListener(new View.OnClickListener() {
 
@@ -184,6 +187,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     }
 
                     // 타이머를 시작한다.
+                    tv_timer.setVisibility(View.VISIBLE);
+                    tv_distance.setVisibility(View.VISIBLE);
+                    tv_avg_speed.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), "타이머를 시작합니다.", Toast.LENGTH_SHORT).show();
 
                     // Flag 설정
@@ -247,9 +253,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             /* Text View 갱신*/
                             tv_timer.setText("주행시간 : " + timer + " 초");
                             tv_distance.setText("주행거리 : "+sum_dist+ " km");
-                            double getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
-                            // tv_avg_speed.setText("속도 : "+getSpeed);
-                            tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
+                            tv_avg_speed.setText("현재속도 : "+getSpeed +" km/h");
+                            //tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
 
                             /* 6초 마다 GPS를 찍기 위한 소스*/
                             if (timer % 6 == 0) {
@@ -259,6 +264,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                     Log.d("GPS사용", "찍힘 : " + timer);
                                     double latitude = location.getLatitude(); // 위도
                                     double longitude = location.getLongitude(); // 경도
+                                    getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
 
                                     /* 현재의 GPS 정보 저장*/
                                     cur_lat = latitude;
@@ -552,6 +558,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         isBtnClickStart = false;
 
                         Toast.makeText(getActivity(), "타이머를 리셋합니다.", Toast.LENGTH_SHORT).show();
+                        tv_timer.setVisibility(View.GONE);
+                        tv_distance.setVisibility(View.GONE);
+                        tv_avg_speed.setVisibility(View.GONE);
 
                         /** 초기화 */
                         timer = 0; // 총 라이딩 시간(타이머) 초기화
@@ -566,8 +575,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                         /* 텍스트 뷰 갱신*/
                         tv_timer.setText("주행시간 : " + timer + " 초");
-//                        tv_avg_speed.setText("평균 속도 : " + avg_speed + " m/s");
-                        tv_distance.setText("주행거리 : " + sum_dist + " m");
+                        tv_avg_speed.setText("현재속도 : " + avg_speed + " km/h");
+                        tv_distance.setText("주행거리 : " + sum_dist + " km");
 
 //                        /* ProgressDialog 시작 */
 //                        mProgressDialog.setMessage("Reset ...");
@@ -813,12 +822,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                     for(int a=0; a<nodeListPlacemarkItem.getLength(); a++ ){
                         if(nodeListPlacemarkItem.item(a).getNodeName().equals("coordinates")){
-                            Log.d("debug", nodeListPlacemarkItem.item(a).getTextContent().trim() );
+                            Log.d("debug1", nodeListPlacemarkItem.item(a).getTextContent().trim() );
                         }
                     }
                     for( int j=0; j<nodeListPlacemarkItem.getLength(); j++ ) {
                         if( nodeListPlacemarkItem.item(j).getNodeName().equals("description") ) {
-                            Log.d("debug", nodeListPlacemarkItem.item(j).getTextContent().trim() );
+                            Log.d("debug2", nodeListPlacemarkItem.item(j).getTextContent().trim() );
                         }
                     }
                     for( int k=0; k<nodeListPlacemarkItem.getLength(); k++ ) {
