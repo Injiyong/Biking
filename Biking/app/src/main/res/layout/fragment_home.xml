@@ -135,24 +135,24 @@
 
                 android:text="주행 시작"/>
 
-            <Button
-                android:id="@+id/btn_timer_finish"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:textColor="#f1c40f"
-                android:backgroundTint="#2c3e50"
-                android:text="주행 종료"/>
+<!--            <Button-->
+<!--                android:id="@+id/btn_timer_finish"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginRight="10dp"-->
+<!--                android:textColor="#f1c40f"-->
+<!--                android:backgroundTint="#2c3e50"-->
+<!--                android:text="주행 종료"/>-->
 
-            <Button
-                android:id="@+id/btn_timer_reset"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:textColor="#f1c40f"
-                android:backgroundTint="#2c3e50"
-                android:text="기록 초기화"
-                />
+<!--            <Button-->
+<!--                android:id="@+id/btn_timer_reset"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginRight="10dp"-->
+<!--                android:textColor="#f1c40f"-->
+<!--                android:backgroundTint="#2c3e50"-->
+<!--                android:text="기록 초기화"-->
+<!--                />-->
 
         </LinearLayout>
         <Button
