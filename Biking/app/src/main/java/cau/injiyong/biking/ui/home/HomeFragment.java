@@ -130,6 +130,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         tmapview = (TMapView)rootView.findViewById(R.id.tmapmap);
 
+        /* db Setting*/
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("USER_ID");
+        userID=mAuth.getUid();
+
         setGps();
         setMap();
 
@@ -410,11 +416,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         isBtnClickStart = false;
 
                         /*firebase database 주행 기록 보내기*/
-                        mAuth = FirebaseAuth.getInstance();
-                        database = FirebaseDatabase.getInstance();
-                        myRef = database.getReference("USER_ID");
-
-                        userID=mAuth.getUid();
 
                         myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -650,31 +651,37 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
     /* 자전거 주차위치 메소드*/
     public void MyBicycle() {
-        Toast.makeText(getContext(), "자전거 주차위치를 터치해주세요", Toast.LENGTH_SHORT).show();
 
-        tmapview.setOnClickListenerCallBack(new TMapView.OnClickListenerCallback() {
-            @Override
-            public boolean onPressEvent(ArrayList<TMapMarkerItem> arrayList,
-                                        ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("주차 위치를 저장하시겠습니까?");
+        builder.setPositiveButton("예",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                TMapMarkerItem markerBicycle = new TMapMarkerItem();
-                Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.bicycle_icon);
-                markerBicycle.setIcon(bitmap); // 마커 아이콘 지정
-                markerBicycle.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
-                markerBicycle.setTMapPoint(tMapPoint); // 마커의 좌표 지정
-                markerBicycle.setName("내 자전거 위치"); // 마커의 타이틀 지정
-                tmapview.addMarkerItem("markerBicycle", markerBicycle); // 지도에 마커 추가
+                        //location.getLatitude(), location.getLongitude()
+                        TMapPoint tMapPoint = new TMapPoint(location.getLatitude(),location.getLongitude());
+                        TMapMarkerItem markerBicycle = new TMapMarkerItem();
+                        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.bicycle_icon);
+                        markerBicycle.setIcon(bitmap); // 마커 아이콘 지정
+                        markerBicycle.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                        markerBicycle.setTMapPoint(tMapPoint); // 마커의 좌표 지정
+                        markerBicycle.setName("내 자전거 위치"); // 마커의 타이틀 지정
+                        markerBicycle.setVisible(TMapMarkerItem.VISIBLE);
 
-                return false;
-            }
+                        myRef.child(userID).child("PARKING").setValue(tMapPoint); //주차 정보 저장
 
-            @Override
-            public boolean onPressUpEvent(ArrayList<TMapMarkerItem> arrayList,
-                                          ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint, PointF pointF) {
-                Destination_Point = tMapPoint;
-                return false;
-            }
-        });
+                        tmapview.addMarkerItem("markerBicycle", markerBicycle); // 지도에 마커 추가
+                        Toast.makeText(getContext(),"주차 위치를 저장했습니다.",Toast.LENGTH_LONG).show();
+                    }
+                });
+        builder.setNegativeButton("아니오",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.show();
+
     }
 
     /* 주변 검색 메소드 */
@@ -705,6 +712,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             markerItem.setName(strData); // 마커의 타이틀 지정
                             tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
                             System.out.println(item.getPOIPoint());
+
                         }
                     }
                 });

@@ -28,6 +28,11 @@
         android:name="cau.injiyong.biking.WeatherFragment"
         android:label="@string/menu_weather"
         tools:layout="@layout/fragment_weather" />
+    <fragment
+        android:id="@+id/nav_findpath"
+        android:name="cau.injiyong.biking.FindPathFragment"
+        android:label="길 찾기"
+        tools:layout="@layout/fragment_find_path" />
 
     <fragment
         android:id="@+id/nav_tools"

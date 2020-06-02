@@ -21,6 +21,10 @@
             android:icon="@drawable/ic_sunny"
             android:title="날씨" />
         <item
+            android:id="@+id/nav_findpath"
+            android:icon="@drawable/ic_path"
+            android:title="길 찾기" />
+        <item
             android:id="@+id/nav_tools"
             android:icon="@drawable/ic_settings"
             android:title="설정" />
