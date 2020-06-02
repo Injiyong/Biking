@@ -50,14 +50,23 @@ import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
 import com.skt.Tmap.util.HttpConnect;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.LogManager;
@@ -165,7 +174,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View v) { StartGuidance(); }});
 
-
+        itemInfoList = new ArrayList<HashMap<String,String>>();
+        accidentProneAreaList = new ArrayList<TMapPoint>();
+        AccidentProneArea();
 
         /* 다인주행 시작 */
         // 주행시작 ~~
@@ -1098,4 +1109,99 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         // ~~ 음성안내
     }
+
+    private List<HashMap<String,String>> itemInfoList = null;
+    private List<TMapPoint> accidentProneAreaList = null;
+
+    public void AccidentProneArea() {
+
+        new Thread(new Runnable() { @Override public void run() {
+
+            String jsonString = null;
+            try {
+                // Open the connection
+                URL url = new URL("https://taas.koroad.or.kr/data/rest/frequentzone/bicycle?authKey=A2dS3DpItXF3S5gPqVobiUS6c1BPlYE%2BSJk1%2B1F2DjfDJCz24uWg0AuL%2FIlQAU4W&searchYearCd=2018&Sido=11&gugun=410&type=json");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                InputStream is = conn.getInputStream();
+
+                InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+                conn.disconnect();
+
+                jsonString = sb.toString().trim();
+            }
+            catch (Exception e) {
+                // Error calling the rest api
+                Log.e("REST_API", "GET method failed: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            try {
+                JSONObject jsonObject = new JSONObject(jsonString);
+                JSONObject items = jsonObject.getJSONObject("items");
+                JSONArray item = items.getJSONArray("item");
+
+                itemInfoList.clear();
+
+                for (int i = 0; i < item.length(); i++) {
+                    JSONObject itemInfo = item.getJSONObject(i);
+
+                    String afos_fid = itemInfo.getString("afos_fid");
+                    String afos_id = itemInfo.getString("afos_id");
+                    String bjd_cd = itemInfo.getString("bjd_cd");
+                    String spot_cd = itemInfo.getString("spot_cd");
+                    String sido_sgg_nm = itemInfo.getString("sido_sgg_nm");
+                    String spot_nm = itemInfo.getString("spot_nm");
+                    String occrrnc_cnt = itemInfo.getString("occrrnc_cnt");
+                    String caslt_cnt = itemInfo.getString("caslt_cnt");
+                    String dth_dnv_cnt = itemInfo.getString("dth_dnv_cnt");
+                    String se_dnv_cnt = itemInfo.getString("se_dnv_cnt");
+                    String sl_dnv_cnt = itemInfo.getString("sl_dnv_cnt");
+                    String wnd_dnv_cnt = itemInfo.getString("wnd_dnv_cnt");
+                    String geom_json = itemInfo.getString("geom_json");
+                    String lo_crd = itemInfo.getString("lo_crd");
+                    String la_crd = itemInfo.getString("la_crd");
+
+                    HashMap<String, String> itemInfoMap = new HashMap<String, String>();
+                    itemInfoMap.put("afos_fid", afos_fid);
+                    itemInfoMap.put("afos_id", afos_id);
+                    itemInfoMap.put("bjd_cd", bjd_cd);
+                    itemInfoMap.put("spot_cd", spot_cd);
+                    itemInfoMap.put("sido_sgg_nm", sido_sgg_nm);
+                    itemInfoMap.put("spot_nm", spot_nm);
+                    itemInfoMap.put("occrrnc_cnt", occrrnc_cnt);
+                    itemInfoMap.put("caslt_cnt", caslt_cnt);
+                    itemInfoMap.put("dth_dnv_cnt", dth_dnv_cnt);
+                    itemInfoMap.put("se_dnv_cnt", se_dnv_cnt);
+                    itemInfoMap.put("sl_dnv_cnt", sl_dnv_cnt);
+                    itemInfoMap.put("wnd_dnv_cnt", wnd_dnv_cnt);
+                    itemInfoMap.put("geom_json", geom_json);
+                    itemInfoMap.put("lo_crd", lo_crd);
+                    itemInfoMap.put("la_crd", la_crd);
+
+                    itemInfoList.add(itemInfoMap);
+                    accidentProneAreaList.add(new TMapPoint(Double.parseDouble(la_crd), Double.parseDouble(lo_crd)));
+
+                }
+
+            } catch (JSONException e) {
+                Log.d(TAG, e.toString() );
+            }
+
+            HashMap<String, String> m = itemInfoList.get(0);
+            System.out.println("accident loc : " + m.get("lo_crd") + " lat : " + m.get("la_crd"));
+
+        } }).start();
+    }
+
 }
