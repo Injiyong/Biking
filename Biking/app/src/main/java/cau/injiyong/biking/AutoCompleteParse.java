@@ -47,8 +47,8 @@ public class AutoCompleteParse extends AsyncTask<String, Void, ArrayList<SearchE
             URL acUrl = new URL(
                     "https://apis.openapi.sk.com/tmap/pois?version=1&page=&"+
                             "count="+SEARCH_COUNT+"&searchKeyword="+encodeWord+
-                            "&areaLLCode=&areaLMCode=&resCoordType=WGS84GEO&searchType=&searchtypCd=&radius=&reqCoordType=&centerLon=&centerLat=&multiPoint=" +
-                            "&callback=&appKey=l7xx3ce387d7e7764c70ba53c4cddb6391eb"
+                            "&areaLLCode=&areaLMCode=&resCoordType=WGS84GEO&searchType=&searchtypCd=&radius=&reqCoordType=&centerLon=&centerLat=&multiPoint="
+                      //      "&callback=&appKey=l7xx3ce387d7e7764c70ba53c4cddb6391eb"
 //                    "https://apis.openapi.sk.com/tmap/pois?areaLMCode=&centerLon=&centerLat=&" +
 //                            "count=" + SEARCH_COUNT + "&page=&reqCoordType=&" + "" +
 //                            "searchKeyword=" + encodeWord + "&callback=&areaLLCode=&multiPoint=&searchtypCd=&radius=&searchType=&resCoordType=WGS84GEO&version=1"

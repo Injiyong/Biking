@@ -23,10 +23,10 @@ import cau.injiyong.biking.Adapter.FindPathAdapter;
 public class FindPathFragment extends Fragment implements RecyclerViewAdapterCallback {
 
 
-    Context context;
 
 
     private EditText editText;
+    private EditText editText_dest;
     private RecyclerView recyclerView_findpath;
     private FindPathAdapter adapter;
     private Handler handler = new Handler(Looper.getMainLooper());
@@ -41,36 +41,15 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
 
         editText = root.findViewById(R.id.edt_search);
+        editText_dest = root.findViewById(R.id.edt_dest_search);
+
         recyclerView_findpath = root.findViewById(R.id.recyclerview_findpath);
 
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        editText.addTextChangedListener(watcher);
+        editText_dest.addTextChangedListener(watcher);
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                final String keyword = s.toString();
-
-                handler.removeCallbacks(workRunnable);
-                workRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.filter(keyword);
-                    }
-                };
-                handler.postDelayed(workRunnable, DELAY);
-            }
-        });
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
-        adapter = new FindPathAdapter();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        adapter = new FindPathAdapter(getContext());
         recyclerView_findpath.setLayoutManager(layoutManager);
         recyclerView_findpath.setAdapter(adapter);
 
@@ -84,12 +63,37 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
     }
 
-
-
     @Override
     public void showToast(int position) {
 
         Toast.makeText(getContext(), position + " clicked.", Toast.LENGTH_SHORT).show();
 
     }
+
+    TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            final String keyword = s.toString();
+
+            handler.removeCallbacks(workRunnable);
+            workRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    adapter.filter(keyword);
+                }
+            };
+            handler.postDelayed(workRunnable, DELAY);
+        }
+    };
 }

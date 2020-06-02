@@ -18,6 +18,7 @@ import cau.injiyong.biking.SearchEntity;
 
 public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHolder> {
 
+    Context context;
     private ArrayList<SearchEntity> itemLists = new ArrayList<>();
     private RecyclerViewAdapterCallback callback;
 
@@ -35,14 +36,18 @@ public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHo
         }
     }
 
+    public FindPathAdapter(Context context) {
 
+        this.context=context;
+
+    }
 
     @Override
     public FindPathAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                          int viewType) {
 
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_path, parent, false);
+        View v = LayoutInflater.from(context)
+                .inflate(R.layout.item_find_path, parent, false);
 
 
         ViewHolder vh = new ViewHolder(v);

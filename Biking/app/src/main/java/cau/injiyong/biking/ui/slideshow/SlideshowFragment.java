@@ -30,6 +30,7 @@ public class SlideshowFragment extends Fragment {
     TextView txt_total_distance;
     TextView txt_total_time;
     RecyclerView recyclerView_history;
+    LinearLayoutManager layoutmanager;
 
     String userID;
     FirebaseDatabase database;
@@ -47,7 +48,12 @@ public class SlideshowFragment extends Fragment {
         txt_total_time = root.findViewById(R.id.txt_total_time);
         recyclerView_history = root.findViewById(R.id.recyclerview_history);
         recyclerView_history.setHasFixedSize(true);
-        recyclerView_history.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,true));
+
+        layoutmanager = new LinearLayoutManager(getContext());
+        layoutmanager.setReverseLayout(true);
+        layoutmanager.setStackFromEnd(true);
+
+        recyclerView_history.setLayoutManager(layoutmanager);
 
         displayRidingHistory();
 
