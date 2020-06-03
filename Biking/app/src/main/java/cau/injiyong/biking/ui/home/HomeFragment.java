@@ -349,6 +349,113 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     }
                     else if(isBtnClickStart==false){
 
+                        /* 타이머를 위한 Handler */
+                        time_handler = new Handler() {
+
+                            @Override
+                            public void handleMessage(Message msg) {
+                                time_handler.sendEmptyMessageDelayed(0, 1000); // 1초 간격으로
+                                timer++; // Timer 증가
+
+                                /* Text View 갱신*/
+                                tv_timer.setText("주행시간 : " + timer + " 초");
+                                tv_distance.setText("주행거리 : "+sum_dist+ " km");
+                                tv_avg_speed.setText("현재속도 : "+getSpeed +" km/h");
+                                //tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
+
+                                /* 6초 마다 GPS를 찍기 위한 소스*/
+                                if (timer % 6 == 0) {
+                                    //GpsInfo gps = new GpsInfo(getActivity());
+                                    // GPS 사용유무 가져오기
+                                    if (location!=null) {
+                                        Log.d("GPS사용", "찍힘 : " + timer);
+                                        double latitude = location.getLatitude(); // 위도
+                                        double longitude = location.getLongitude(); // 경도
+                                        getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
+
+                                        /* 현재의 GPS 정보 저장*/
+                                        cur_lat = latitude;
+                                        cur_long = longitude;
+
+                                        LatLng latLngBef = new LatLng(bef_lat, bef_long);
+                                        LatLng latLngCur = new LatLng(cur_lat, cur_long);
+                                        String markerSnippet2 = "bef" + String.valueOf(latLngBef)
+                                                + " cur:" + String.valueOf(latLngCur);
+
+                                        Log.d(TAG, "calDistResult : " + markerSnippet2);
+
+                                        /* 이전의 GPS 정보와 현재의 GPS 정보로 거리를 구한다.*/
+                                        calDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long); // 거리계산하는 클래스 호출
+                                        double dist = calDistance.getDistance()*0.001; // m
+                                        dist = (int)(dist * 100) / 100.0; // 소수점 둘째 자리 계산
+                                        sum_dist += dist;
+
+
+                                        /* 평균 속도 계산하기 */
+                                        avg_speed = dist/timer;
+                                        avg_speed = (int)(avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
+
+
+                                        /* 이전의 GPS 정보를 현재의 GPS 정보로 변환한다. */
+                                        bef_lat = cur_lat;
+                                        bef_long = cur_long;
+
+                                        // 현재 화면에 찍힌 포인트로 부터 위도와 경도를 알려준다.
+                                        LatLng latLng = new LatLng(latitude, longitude);
+
+                                        // Showing the current location in Google Map
+                                        //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                                        //tmapview.setCenterPoint(latitude, longitude, true);
+
+                                        // Map 을 zoom 합니다.
+                                        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                                        // tmapview.setZoomLevel(15);
+
+
+                                        /* 이전과 현재의 point로 폴리 라인을 긋는다*/
+                                        current_point = latLng;
+
+                                        String markerSnippet = "위도:" + String.valueOf(current_point)
+                                                + " 경도:" + String.valueOf(ex_point);
+
+                                        Log.d(TAG, "polyLineLocResult : " + markerSnippet);
+
+
+//                                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(3).add(latLngCur).add(latLngBef);
+//                                    mMap.addPolyline(options);
+//                                    ArrayList<TMapPoint> alTMapPoint = new ArrayList<TMapPoint>();
+//                                    alTMapPoint.add( new TMapPoint(37.570841, 126.985302) ); // SKT타워
+//                                    alTMapPoint.add( new TMapPoint(37.551135, 126.988205) ); // N서울타워
+//                                    alTMapPoint.add( new TMapPoint(37.579600, 126.976998) ); // 경복궁
+
+                                        TMapPolyLine tMapPolyLine = new TMapPolyLine();
+                                        tMapPolyLine.setLineColor(Color.BLUE);
+                                        tMapPolyLine.setLineWidth(2);
+                                        tMapPolyLine.addLinePoint(new TMapPoint(latitude,longitude));
+                                        tmapview.addTMapPolyLine("Line1", tMapPolyLine);
+
+
+//                                    PolylineOptions polylineOptions = new PolylineOptions();
+//                                    polylineOptions.color(0xFFFF0000);
+//                                    polylineOptions.width(5);
+//                                    polylineOptions.addAll(arrayPoints);
+//                                    mMap.addPolyline(polylineOptions);
+
+                                        ex_point = latLng;
+
+//                                    // 마커 설정.
+//                                    MarkerOptions optFirst = new MarkerOptions();
+//                                    optFirst.alpha(0.5f);
+//                                    optFirst.anchor(0.5f, 0.5f);
+//                                    optFirst.position(latLng);// 위도 • 경도
+//                                    optFirst.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//                                    mMap.addMarker(optFirst).showInfoWindow();
+                                    }
+                                }
+                            }
+                        };
+                        time_handler.sendEmptyMessage(0);
+
                         // 타이머를 시작한다.
                         tv_timer.setVisibility(View.VISIBLE);
                         tv_distance.setVisibility(View.VISIBLE);
@@ -405,112 +512,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             s_time = sdfNow.format(date);
                         }
                     }
-                    /* 타이머를 위한 Handler */
-                    time_handler = new Handler() {
 
-                        @Override
-                        public void handleMessage(Message msg) {
-                            time_handler.sendEmptyMessageDelayed(0, 1000); // 1초 간격으로
-                            timer++; // Timer 증가
-
-                            /* Text View 갱신*/
-                            tv_timer.setText("주행시간 : " + timer + " 초");
-                            tv_distance.setText("주행거리 : "+sum_dist+ " km");
-                            tv_avg_speed.setText("현재속도 : "+getSpeed +" km/h");
-                            //tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
-
-                            /* 6초 마다 GPS를 찍기 위한 소스*/
-                            if (timer % 6 == 0) {
-                                //GpsInfo gps = new GpsInfo(getActivity());
-                                // GPS 사용유무 가져오기
-                                if (location!=null) {
-                                    Log.d("GPS사용", "찍힘 : " + timer);
-                                    double latitude = location.getLatitude(); // 위도
-                                    double longitude = location.getLongitude(); // 경도
-                                    getSpeed = Double.parseDouble(String.format("%.3f",location.getSpeed()));
-
-                                    /* 현재의 GPS 정보 저장*/
-                                    cur_lat = latitude;
-                                    cur_long = longitude;
-
-                                    LatLng latLngBef = new LatLng(bef_lat, bef_long);
-                                    LatLng latLngCur = new LatLng(cur_lat, cur_long);
-                                    String markerSnippet2 = "bef" + String.valueOf(latLngBef)
-                                            + " cur:" + String.valueOf(latLngCur);
-
-                                    Log.d(TAG, "calDistResult : " + markerSnippet2);
-
-                                    /* 이전의 GPS 정보와 현재의 GPS 정보로 거리를 구한다.*/
-                                    calDistance = new CalDistance(bef_lat,bef_long,cur_lat,cur_long); // 거리계산하는 클래스 호출
-                                    double dist = calDistance.getDistance()*0.001; // m
-                                    dist = (int)(dist * 100) / 100.0; // 소수점 둘째 자리 계산
-                                    sum_dist += dist;
-
-
-                                    /* 평균 속도 계산하기 */
-                                    avg_speed = dist/timer;
-                                    avg_speed = (int)(avg_speed * 100) / 100.0; // 소수점 둘째 자리 계산
-
-
-                                    /* 이전의 GPS 정보를 현재의 GPS 정보로 변환한다. */
-                                    bef_lat = cur_lat;
-                                    bef_long = cur_long;
-
-                                    // 현재 화면에 찍힌 포인트로 부터 위도와 경도를 알려준다.
-                                    LatLng latLng = new LatLng(latitude, longitude);
-
-                                    // Showing the current location in Google Map
-                                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                                    //tmapview.setCenterPoint(latitude, longitude, true);
-
-                                    // Map 을 zoom 합니다.
-                                    //mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                                    // tmapview.setZoomLevel(15);
-
-
-                                    /* 이전과 현재의 point로 폴리 라인을 긋는다*/
-                                    current_point = latLng;
-
-                                    String markerSnippet = "위도:" + String.valueOf(current_point)
-                                            + " 경도:" + String.valueOf(ex_point);
-
-                                    Log.d(TAG, "polyLineLocResult : " + markerSnippet);
-
-
-//                                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(3).add(latLngCur).add(latLngBef);
-//                                    mMap.addPolyline(options);
-//                                    ArrayList<TMapPoint> alTMapPoint = new ArrayList<TMapPoint>();
-//                                    alTMapPoint.add( new TMapPoint(37.570841, 126.985302) ); // SKT타워
-//                                    alTMapPoint.add( new TMapPoint(37.551135, 126.988205) ); // N서울타워
-//                                    alTMapPoint.add( new TMapPoint(37.579600, 126.976998) ); // 경복궁
-
-                                    TMapPolyLine tMapPolyLine = new TMapPolyLine();
-                                    tMapPolyLine.setLineColor(Color.BLUE);
-                                    tMapPolyLine.setLineWidth(2);
-                                    tMapPolyLine.addLinePoint(new TMapPoint(latitude,longitude));
-                                    tmapview.addTMapPolyLine("Line1", tMapPolyLine);
-
-
-//                                    PolylineOptions polylineOptions = new PolylineOptions();
-//                                    polylineOptions.color(0xFFFF0000);
-//                                    polylineOptions.width(5);
-//                                    polylineOptions.addAll(arrayPoints);
-//                                    mMap.addPolyline(polylineOptions);
-
-                                    ex_point = latLng;
-
-//                                    // 마커 설정.
-//                                    MarkerOptions optFirst = new MarkerOptions();
-//                                    optFirst.alpha(0.5f);
-//                                    optFirst.anchor(0.5f, 0.5f);
-//                                    optFirst.position(latLng);// 위도 • 경도
-//                                    optFirst.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//                                    mMap.addMarker(optFirst).showInfoWindow();
-                                }
-                            }
-                        }
-                    };
-                    time_handler.sendEmptyMessage(0);
                 }
             }
         });
