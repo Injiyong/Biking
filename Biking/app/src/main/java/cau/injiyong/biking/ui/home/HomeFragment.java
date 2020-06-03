@@ -767,6 +767,79 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 //        // ~~ 기록 초기화
 //        /* 다인주행 끝 */
 
+        /** 지연 0603 DB 수정 **/
+        /*firebase database 주행 기록 보내기*/
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("USER_ID");
+
+        userID=mAuth.getUid();
+
+        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
+                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
+                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
+
+                if (total_dist.equals("null")) {//데이터 없을 때
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist);
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer);
+                }
+                else{//데이터 있으면 최근 기록과 더해서 update
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist+Float.parseFloat(total_dist));
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer+Integer.parseInt(total_time));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });;
+
+//                        Geocoder geocoder= new Geocoder(getContext());
+//                        List<android.location.Address> list = null;
+//                        List<android.location.Address> list2 = null;
+//                        try {
+//                            //미리 구해놓은 위도값 mLatitude;
+//                            //미리 구해놓은 경도값 mLongitude;
+//
+//                            list = geocoder.getFromLocation(
+//                                    Double.valueOf(s_lat), // 위도
+//                                    Double.valueOf(s_long), // 경도
+//                                    1); // 얻어올 값의 개수
+//                            list2 = geocoder.getFromLocation(
+//                                    Double.valueOf(f_lat), // 위도
+//                                    Double.valueOf(f_long), // 경도
+//                                    1); // 얻어올 값의 개수
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            Log.e("test", "입출력 오류");
+//                        }
+//                        if (list != null) {
+//                            if (list.size()==0) {
+//                                s_adress="해당되는 주소 정보는 없습니다";
+//                            } else {
+//                                s_adress=list.get(0).getAddressLine(0);
+//                                Log.d("wldus",s_adress);
+//                            }
+//                        }
+//                        if (list2 != null) {
+//                            if (list2.size()==0) {
+//                                f_adress="해당되는 주소 정보는 없습니다";
+//                            } else {
+//                                f_adress=list2.get(0).getAddressLine(0);
+//                                Log.d("wldus",s_adress);
+//                            }
+//                        }
+
+//                        Log.d("wldus",s_adress);
+        //최근 주행 기록 정보 넘기는 부분
+        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),"서울시 동작구 흑석동","서울시 동작구 흑석동");
+        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
+        /** 지연 0603 DB 수정 끝**/
+
         return rootView;
     }
 
@@ -854,14 +927,46 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         builder.setTitle("주변 검색");
 
         final EditText input = new EditText(getContext());
+
+        final List<String> ListItems = new ArrayList<>();
+        ListItems.add("편의점");
+        ListItems.add("병원");
+        ListItems.add("자전거");
+        final CharSequence[] items =  ListItems.toArray(new String[ListItems.size()]);
+
         builder.setView(input);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int pos) {
+                final String selectedText = items[pos].toString();
+                TMapData tMapData = new TMapData();
+                TMapPoint tPoint = tmapview.getLocationPoint();
+                //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+                tMapData.findAroundNamePOI(tPoint, selectedText, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
+                    @Override
+                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
+                        for(int i = 0; i < poiItem.size(); i++) {
+                            TMapPOIItem item = poiItem.get(i);
+
+                            TMapMarkerItem markerItem = new TMapMarkerItem();
+                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
+                            markerItem.setIcon(bitmap); // 마커 아이콘 지정
+                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
+                            markerItem.setName(selectedText); // 마커의 타이틀 지정
+                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+                            System.out.println(item.getPOIPoint());
+                        }
+                    }
+                });
+            }
+        });
         builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String strData = input.getText().toString();
                 TMapData tMapData = new TMapData();
-                //TMapPoint tPoint = tmapview.getLocationPoint();
-                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+                TMapPoint tPoint = tmapview.getLocationPoint();
+                //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
                 tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
                     @Override
                     public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
