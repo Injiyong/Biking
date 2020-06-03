@@ -89,30 +89,32 @@
             android:layout_centerInParent="true"
             >
 
-            <Button
-                android:text="위치검색"
-                android:textColor="#f1c40f"
-                android:backgroundTint="#2c3e50"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginRight="40dp"
-                android:id="@+id/btn_search"/>
+<!--            <Button-->
+<!--                android:text="위치검색"-->
+<!--                android:textColor="#f1c40f"-->
+<!--                android:backgroundTint="#2c3e50"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_marginRight="40dp"-->
+<!--                android:id="@+id/btn_search"/>-->
 
-            <Button
-                android:text="위치선택"
-                android:textColor="#f1c40f"
-                android:backgroundTint="#2c3e50"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:layout_marginRight="40dp"
-                android:id="@+id/btn_select"/>
-            <Button
-                android:text="안내시작"
-                android:backgroundTint="#2c3e50"
-                android:textColor="#f1c40f"
-                android:layout_width="100dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_start"/>
+<!--            <Button-->
+<!--                android:text="위치선택"-->
+<!--                android:textColor="#f1c40f"-->
+<!--                android:backgroundTint="#2c3e50"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:layout_marginRight="40dp"-->
+<!--                android:id="@+id/btn_select"/>-->
+<!--            <Button-->
+<!--                android:text="안내시작"-->
+<!--                android:backgroundTint="#2c3e50"-->
+<!--                android:textColor="#f1c40f"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:id="@+id/btn_start"/>-->
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -126,14 +128,31 @@
             android:layout_alignParentBottom="true"
             >
             <Button
-                android:id="@+id/btn_timer_start"
+            android:id="@+id/btn_timer_start"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:layout_marginRight="10dp"
+            android:text="주행시작"/>
+
+            <Button
+                android:id="@+id/btn_myBicycle"
                 android:textColor="#f1c40f"
                 android:backgroundTint="#2c3e50"
                 android:layout_width="100dp"
-                android:layout_height="40dp"
+                android:layout_height="60dp"
                 android:layout_marginRight="10dp"
+                android:text="주차위치"/>
 
-                android:text="주행 시작"/>
+            <Button
+                android:id="@+id/btn_searchAround"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="10dp"
+                android:text="주변검색"/>
 
 <!--            <Button-->
 <!--                android:id="@+id/btn_timer_finish"-->
@@ -155,25 +174,25 @@
 <!--                />-->
 
         </LinearLayout>
-        <Button
-            android:id="@+id/btn_myBicycle"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="10dp"
-            android:textColor="#f1c40f"
-            android:backgroundTint="#2c3e50"
-            android:text="주차위치"
-            />
+<!--        <Button-->
+<!--            android:id="@+id/btn_myBicycle"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:textColor="#f1c40f"-->
+<!--            android:backgroundTint="#2c3e50"-->
+<!--            android:text="주차위치"-->
+<!--            />-->
 
-        <Button
-            android:text="주변검색"
-            android:textColor="#f1c40f"
-            android:backgroundTint="#2c3e50"
-            android:layout_marginTop="40dp"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="40dp"
-            android:id="@+id/btn_searchAround"/>
+<!--        <Button-->
+<!--            android:text="주변검색"-->
+<!--            android:textColor="#f1c40f"-->
+<!--            android:backgroundTint="#2c3e50"-->
+<!--            android:layout_marginTop="40dp"-->
+<!--            android:layout_width="100dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_marginRight="40dp"-->
+<!--            android:id="@+id/btn_searchAround"/>-->
 
     </FrameLayout>
 </LinearLayout>

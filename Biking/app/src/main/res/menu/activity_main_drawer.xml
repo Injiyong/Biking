@@ -7,40 +7,40 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="메인 화면" />
+            android:title="메인화면" />
         <item
             android:id="@+id/nav_findpath"
             android:icon="@drawable/ic_path"
-            android:title="길 찾기" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_timer"
-            android:title="속도계" />
+            android:title="길찾기" />
+<!--        <item-->
+<!--            android:id="@+id/nav_gallery"-->
+<!--            android:icon="@drawable/ic_timer"-->
+<!--            android:title="속도계" />-->
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_list"
-            android:title="주행 기록" />
+            android:title="주행기록" />
         <item
             android:id="@+id/nav_weather"
             android:icon="@drawable/ic_sunny"
             android:title="날씨" />
-        <item
-            android:id="@+id/nav_tools"
-            android:icon="@drawable/ic_settings"
-            android:title="설정" />
+<!--        <item-->
+<!--            android:id="@+id/nav_tools"-->
+<!--            android:icon="@drawable/ic_settings"-->
+<!--            android:title="설정" />-->
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
-        </menu>
-    </item>
+<!--    <item android:title="Communicate">-->
+<!--        <menu>-->
+<!--            <item-->
+<!--                android:id="@+id/nav_share"-->
+<!--                android:icon="@drawable/ic_menu_share"-->
+<!--                android:title="@string/menu_share" />-->
+<!--            <item-->
+<!--                android:id="@+id/nav_send"-->
+<!--                android:icon="@drawable/ic_menu_send"-->
+<!--                android:title="@string/menu_send" />-->
+<!--        </menu>-->
+<!--    </item>-->
 
 </menu>

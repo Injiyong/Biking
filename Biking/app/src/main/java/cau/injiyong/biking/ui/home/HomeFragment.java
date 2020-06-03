@@ -159,20 +159,20 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View v) { SearchAround(); }});
 
-        Button button_search = (Button) rootView.findViewById(R.id.btn_search);
-        button_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { SearchDestination(); }});
-
-        Button button_select = (Button) rootView.findViewById(R.id.btn_select);
-        button_select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { ClickDestination(); }});
-
-        Button button_start = (Button) rootView.findViewById(R.id.btn_start);
-        button_start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { StartGuidance(); }});
+//        Button button_search = (Button) rootView.findViewById(R.id.btn_search);
+//        button_search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { SearchDestination(); }});
+//
+//        Button button_select = (Button) rootView.findViewById(R.id.btn_select);
+//        button_select.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { ClickDestination(); }});
+//
+//        Button button_start = (Button) rootView.findViewById(R.id.btn_start);
+//        button_start.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { StartGuidance(); }});
 
         itemInfoList = new ArrayList<HashMap<String,String>>();
         accidentProneAreaList = new ArrayList<TMapPoint>();
