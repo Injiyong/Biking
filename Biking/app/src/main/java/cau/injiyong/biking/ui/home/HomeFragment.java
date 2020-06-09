@@ -159,16 +159,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View v) { SearchAround(); }});
 
-//        Button button_search = (Button) rootView.findViewById(R.id.btn_search);
-//        button_search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { SearchDestination(); }});
-//
-//        Button button_select = (Button) rootView.findViewById(R.id.btn_select);
-//        button_select.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { ClickDestination(); }});
-//
 //        Button button_start = (Button) rootView.findViewById(R.id.btn_start);
 //        button_start.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -177,6 +167,18 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         itemInfoList = new ArrayList<HashMap<String,String>>();
         accidentProneAreaList = new ArrayList<TMapPoint>();
         AccidentProneArea();
+
+
+        tmapview.setOnCalloutRightButtonClickListener(new TMapView.OnCalloutRightButtonClickCallback() {
+            @Override
+            public void onCalloutRightButton(TMapMarkerItem tMapMarkerItem) {
+
+                //TMapPoint tPoint = tmapview.getLocationPoint();
+                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+                StartGuidance(tPoint, tMapMarkerItem.getTMapPoint());
+
+            }
+        });
 
         /* 다인주행 시작 */
         // 주행시작 ~~
@@ -953,6 +955,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
                             markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
                             markerItem.setName(selectedText); // 마커의 타이틀 지정
+                            markerItem.setCanShowCallout(true);
+                            markerItem.setCalloutTitle(selectedText);
                             tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
                             System.out.println(item.getPOIPoint());
                         }
@@ -965,8 +969,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             public void onClick(DialogInterface dialog, int which) {
                 final String strData = input.getText().toString();
                 TMapData tMapData = new TMapData();
-                TMapPoint tPoint = tmapview.getLocationPoint();
-                //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+                //TMapPoint tPoint = tmapview.getLocationPoint();
+                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
                 tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
                     @Override
                     public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
@@ -974,11 +978,17 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             TMapPOIItem item = poiItem.get(i);
 
                             TMapMarkerItem markerItem = new TMapMarkerItem();
-                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
-                            markerItem.setIcon(bitmap); // 마커 아이콘 지정
+                            //Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
+                            markerItem.setIcon(item.Icon); // 마커 아이콘 지정
                             markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
                             markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
                             markerItem.setName(strData); // 마커의 타이틀 지정
+
+                            markerItem.setCanShowCallout(true);
+                            markerItem.setCalloutTitle("(" + Double.toString(Double.parseDouble(item.radius) * 1000) + "m)  " + item.name);
+                            markerItem.setCalloutSubTitle(item.upperAddrName + " " + item.middleAddrName + " " + item.lowerAddrName);
+                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.findpath_icon);
+                            markerItem.setCalloutRightButtonImage(bitmap);
                             tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
                             System.out.println(item.getPOIPoint());
                         }
@@ -1089,11 +1099,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
 
     /* 경로찾기 메소드 */
-    public void StartGuidance() {
+    public void StartGuidance(TMapPoint point1, TMapPoint point2) {
         tmapview.removeTMapPath();
 
-        TMapPoint point1 = tmapview.getLocationPoint();
-        TMapPoint point2 = Destination_Point;
+        //TMapPoint point1 = tmapview.getLocationPoint();
+        //TMapPoint point2 = Destination_Point;
 
         TMapData tmapdata = new TMapData();
 
