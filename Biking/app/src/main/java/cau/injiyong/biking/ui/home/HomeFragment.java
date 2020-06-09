@@ -78,6 +78,10 @@ import static android.speech.tts.TextToSpeech.ERROR;
 
 public class HomeFragment extends Fragment implements TMapGpsManager.onLocationChangedCallback {
 
+    public static HomeFragment newInstance() {
+        return new HomeFragment();
+    }
+
     @Override
     public void onLocationChange(Location location) {
         tmapview.setLocationPoint(location.getLongitude(),location.getLatitude());
@@ -138,11 +142,19 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String s_adress;
     String f_adress;
 
+    static String startpath;
+    static String destpath;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         tmapview = (TMapView)rootView.findViewById(R.id.tmapmap);
+
+        if(startpath!=null) {
+            TMapPoint start = new TMapPoint(37.570841, 126.985302);
+            TMapPoint dest =  new TMapPoint(37.572592, 126.990507);
+            StartGuidance(start,dest);}
 
         setGps();
         setMap();
@@ -1319,6 +1331,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             System.out.println("accident loc : " + m.get("lo_crd") + " lat : " + m.get("la_crd"));
 
         } }).start();
+    }
+
+    public static void setPath(String start, String dest){
+        startpath=start;
+        destpath=dest;
+
     }
 
 }

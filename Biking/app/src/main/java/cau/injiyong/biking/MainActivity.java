@@ -11,6 +11,9 @@ import com.google.android.material.snackbar.Snackbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -28,6 +31,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import cau.injiyong.biking.ui.home.HomeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
         nameTextView.setText(mAuth.getCurrentUser().getDisplayName());
         emailTextview.setText(mAuth.getCurrentUser().getEmail());
-      //  profile.setImageURI(mAuth.getCurrentUser().getPhotoUrl());
+        //  profile.setImageURI(mAuth.getCurrentUser().getPhotoUrl());
 
 
         RequestOptions options = new RequestOptions();
@@ -116,5 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    public void replaceFragment(Fragment fragment) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.nav_host_fragment, fragment).commit();
+    }
 
 }

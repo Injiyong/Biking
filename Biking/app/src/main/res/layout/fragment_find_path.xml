@@ -5,7 +5,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2c3e50">
+    android:background="#2c3e50"
+    android:id="@+id/layout_findpath">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +54,17 @@
             android:background="#ffffff"/>
     </LinearLayout>
 
+    <Button
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_find_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="길찾기"
+        android:textStyle="bold"
+        android:textSize="17dp"
+        android:textColor="#ffffff"
+        android:background="#0082b9"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_findpath"

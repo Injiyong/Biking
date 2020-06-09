@@ -15,7 +15,11 @@
         android:id="@+id/nav_findpath"
         android:name="cau.injiyong.biking.FindPathFragment"
         android:label="길찾기"
-        tools:layout="@layout/fragment_find_path" />
+        tools:layout="@layout/fragment_find_path" >
+        <action
+            android:id="@+id/action_nav_findpath_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"

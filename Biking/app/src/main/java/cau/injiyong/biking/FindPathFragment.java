@@ -9,17 +9,21 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
 import cau.injiyong.biking.Adapter.FindPathAdapter;
+import cau.injiyong.biking.ui.home.HomeFragment;
 
+//길 찾기 fragment
 public class FindPathFragment extends Fragment implements RecyclerViewAdapterCallback {
 
 
@@ -27,11 +31,17 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
     private EditText editText;
     private EditText editText_dest;
+    private Button btn_find_path;
     private RecyclerView recyclerView_findpath;
     private FindPathAdapter adapter;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
     private final long DELAY = 500;
+
+    public static FindPathFragment newInstance() {
+        return new FindPathFragment();
+    }
+
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,6 +52,8 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
         editText = root.findViewById(R.id.edt_search);
         editText_dest = root.findViewById(R.id.edt_dest_search);
+
+        btn_find_path=root.findViewById(R.id.btn_find_path);
 
         recyclerView_findpath = root.findViewById(R.id.recyclerview_findpath);
 
@@ -54,6 +66,10 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
         recyclerView_findpath.setAdapter(adapter);
 
         adapter.setCallback(this);
+
+        btn_find_path.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { findPathButtonClickListener(); }});
 
         return root;
     }
@@ -96,4 +112,9 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
             handler.postDelayed(workRunnable, DELAY);
         }
     };
+
+    public void findPathButtonClickListener(){
+        HomeFragment.setPath("dd","dd");
+        ((MainActivity)getActivity()).replaceFragment(HomeFragment.newInstance());
+    }
 }

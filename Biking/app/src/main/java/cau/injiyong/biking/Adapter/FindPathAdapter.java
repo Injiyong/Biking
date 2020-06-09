@@ -63,8 +63,8 @@ public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHo
         if( holder instanceof ViewHolder ) {
             ViewHolder viewHolder = (ViewHolder)holder;
 
-            viewHolder.title.setText(itemLists.get(0).getTitle());
-            viewHolder.address.setText(itemLists.get(0).getAddress());
+            viewHolder.title.setText(itemLists.get(position).getTitle());
+            viewHolder.address.setText(itemLists.get(position).getAddress());
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
