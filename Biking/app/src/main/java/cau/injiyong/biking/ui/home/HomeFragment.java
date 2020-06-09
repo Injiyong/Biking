@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import cau.injiyong.biking.CalDistance;
 import cau.injiyong.biking.Common.Common;
+import cau.injiyong.biking.CustomDialog;
 import cau.injiyong.biking.R;
 import cau.injiyong.biking.RecentInformationItem;
 
@@ -130,6 +132,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     ArrayList descripList = new ArrayList();
     ArrayList mapPoint = new ArrayList();
     private TextToSpeech tts;
+    ArrayList<TMapPoint> alTMapPoint2;
+    LinearLayout layout;
     /* 다인변수 끝 */
 
 
@@ -175,6 +179,52 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 //        button_start.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) { StartGuidance(); }});
+
+        layout = (LinearLayout)rootView.findViewById(R.id.layout);
+        Button button_start = (Button) rootView.findViewById(R.id.btn_review);
+        button_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final TMapPoint arr[] = new TMapPoint[alTMapPoint2.size()];
+                int i=0;
+                for(i=0;i<arr.length;i++){
+                    arr[i]=alTMapPoint2.get(i);
+                }
+
+                for(int k=0; k<arr.length/2; k++){
+                    final int a=k;
+                    Button button = new Button(getActivity().getApplicationContext());
+                    button.setText("도로 "+String.valueOf(k+1));
+                    button.setTextColor(Color.parseColor("#f1c40f"));
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(getActivity().getApplicationContext(),"Toast. ", Toast.LENGTH_SHORT).show();
+                            // 데이터를 다이얼로그로 보내는 코드
+                            Bundle args = new Bundle();
+                            args.putString("key", "value");
+                            //---------------------------------------.//
+                            CustomDialog dialog = new CustomDialog();
+                            dialog.setArguments(args); // 데이터 전달
+                            dialog.show(getActivity().getSupportFragmentManager(),"tag");
+
+                            TMapPoint point1 = arr[2*a];
+                            TMapPoint point2 = arr[(2*a)+1];
+                            TMapData tmapdata = new TMapData();
+                            tmapdata.findPathDataWithType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
+                                @Override
+                                public void onFindPathData(TMapPolyLine polyLine) {
+                                    polyLine.setLineColor(Color.RED);
+                                    tmapview.addTMapPath(polyLine);
+                                }
+                            });
+                        }
+                    });
+                    layout.addView(button);
+
+                }
+
+            }});
 
         itemInfoList = new ArrayList<HashMap<String,String>>();
         accidentProneAreaList = new ArrayList<TMapPoint>();
@@ -1166,7 +1216,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     Element item = (Element) list.item(i);
                     String str = HttpConnect.getContentFromNode(item, "coordinates");
                     if (str != null) {
-
                         String[] str2 = str.split(" ");
                         for(int j = 0; j < str2.length; ++j) {
                             try {
@@ -1190,6 +1239,26 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             }
                         }
 
+                    }
+                }
+
+
+                NodeList line = root.getElementsByTagName("LineString"); // 노드 타입이 LineString 일 때 (도로) 리뷰에 쓸거
+                alTMapPoint2 = new ArrayList<TMapPoint>();
+                for(int i = 0; i < line.getLength(); ++i) {
+                    Element item2 = (Element)line.item(i);
+                    String str = HttpConnect.getContentFromNode(item2, "coordinates");
+                    if(str != null) {
+                        String[] str2 = str.split(" ");
+
+                        for(int j = 0; j < str2.length; ++j) {
+                            try {
+                                String[] str3 = str2[j].split(",");
+                                alTMapPoint2.add( new TMapPoint(Double.parseDouble(str3[j+1]), Double.parseDouble(str3[j])) );
+
+                            } catch (Exception e) {
+                            }
+                        }
                     }
                 }
             }
@@ -1216,14 +1285,14 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         int i=0,j=0;
         double latitude,longitude;
 
-        while(i<mapPoint.size()){
-            String lat=ObjToString(mapPoint.get(i));
+        for(i=0;i<mapPoint.size();i++){
+            String lat=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
             i++;
-            String lon=ObjToString(mapPoint.get(i));
-            i++;
+            String lon=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
+
             while(true){
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
+                latitude = (location.getLatitude()*10000)/10000;
+                longitude = (location.getLongitude()*10000)/10000;
                 Log.d("voicelat", String.valueOf(latitude));
                 Log.d("voicelong", String.valueOf(longitude));
                 if(String.valueOf(latitude)==lat && String.valueOf(longitude)==lon){
