@@ -76,149 +76,193 @@
             android:text="현재속도 : 0 km/h" />
 
 
-        <LinearLayout
-            android:layout_marginBottom="5dp"
-            android:id="@+id/fragment_map2_LL_0"
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="150dp">
+            <LinearLayout
+                android:id="@+id/layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!--        <LinearLayout-->
+        <!--            android:layout_marginBottom="5dp"-->
+        <!--            android:id="@+id/fragment_map2_LL_0"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:gravity="center"-->
+        <!--            android:paddingTop="500dp"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            android:layout_alignParentBottom="true"-->
+        <!--            android:layout_centerHorizontal="true"-->
+        <!--            android:layout_centerInParent="true"-->
+        <!--            >-->
+        <!--        </LinearLayout>-->
+
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:paddingTop="500dp"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerInParent="true"
-            >
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
             android:orientation="vertical"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="80dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:id="@+id/search_around_layout"
             >
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-                <LinearLayout
-                    android:id="@+id/layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="56dp"
                 android:orientation="horizontal"
                 android:gravity="center"
+                android:layout_marginTop="70dp"
                 >
-                <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="30dp"
-                    android:background="@drawable/store_icon"
-                />
 
                 <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="30dp"
-                    android:background="@drawable/hospital_icon"
+                    android:id="@+id/btn_store"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginRight="50dp"
+                    android:background="@drawable/store_icon2"
                     />
 
                 <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/bicycle_icon"
+                    android:id="@+id/btn_hospital"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginRight="50dp"
+                    android:background="@drawable/hospital_icon2"
+                    />
+
+                <ImageButton
+                    android:id="@+id/btn_bicycle"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:background="@drawable/bicycle_icon2"
                     />
 
             </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom">
+                android:layout_height="60dp"
+                android:layout_gravity="top"
+                android:background="#2c3e50"
+                >
                 <EditText
+                    android:id="@+id/search_edit"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="37dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:hint="장소를 검색하세요"
+                    android:padding="7dp"
                     android:background="@drawable/rounded_edittext"/>
 
+                <ImageButton
+                    android:id="@+id/btn_search"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right|center"
+                    android:layout_marginRight="25dp"
+                    android:background="@drawable/search_button"
+                    />
             </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_gravity="bottom"
-            android:background="@drawable/button_bar"
-            >
-            <LinearLayout
-                android:id="@+id/fragment_map2_LL_1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal"
-                >
-                <Button
-                android:id="@+id/btn_timer_start"
-                android:textColor="#f1c40f"
-                android:backgroundTint="#2c3e50"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="10dp"
-                android:text="주행시작"/>
-
-                <Button
-                    android:id="@+id/btn_myBicycle"
-                    android:textColor="#f1c40f"
-                    android:backgroundTint="#2c3e50"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="10dp"
-                    android:text="주차위치"/>
-
-                <Button
-                    android:id="@+id/btn_searchAround"
-                    android:textColor="#f1c40f"
-                    android:backgroundTint="#2c3e50"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="10dp"
-                    android:text="주변검색"/>
-
-                <Button
-                    android:id="@+id/btn_review"
-                    android:textColor="#f1c40f"
-                    android:backgroundTint="#2c3e50"
-                    android:layout_width="100dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="10dp"
-                    android:text="리뷰"/>
-
-    <!--            <Button-->
-    <!--                android:id="@+id/btn_timer_finish"-->
-    <!--                android:layout_width="100dp"-->
-    <!--                android:layout_height="40dp"-->
-    <!--                android:layout_marginRight="10dp"-->
-    <!--                android:textColor="#f1c40f"-->
-    <!--                android:backgroundTint="#2c3e50"-->
-    <!--                android:text="주행 종료"/>-->
-
-    <!--            <Button-->
-    <!--                android:id="@+id/btn_timer_reset"-->
-    <!--                android:layout_width="100dp"-->
-    <!--                android:layout_height="40dp"-->
-    <!--                android:layout_marginRight="10dp"-->
-    <!--                android:textColor="#f1c40f"-->
-    <!--                android:backgroundTint="#2c3e50"-->
-    <!--                android:text="기록 초기화"-->
-    <!--                />-->
-            </LinearLayout>
         </FrameLayout>
-        </LinearLayout>
-    </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="70dp"
+                >
+                <LinearLayout
+                    android:id="@+id/fragment_map2_LL_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    >
+                    <!--                <Button-->
+                    <!--                android:id="@+id/btn_timer_start"-->
+                    <!--                android:textColor="#f1c40f"-->
+                    <!--                android:backgroundTint="#2c3e50"-->
+                    <!--                android:layout_width="100dp"-->
+                    <!--                android:layout_height="40dp"-->
+                    <!--                android:layout_marginRight="10dp"-->
+                    <!--                android:text="주행시작"/>-->
+
+                    <!--                <Button-->
+                    <!--                    android:id="@+id/btn_myBicycle"-->
+                    <!--                    android:textColor="#f1c40f"-->
+                    <!--                    android:backgroundTint="#2c3e50"-->
+                    <!--                    android:layout_width="100dp"-->
+                    <!--                    android:layout_height="40dp"-->
+                    <!--                    android:layout_marginRight="10dp"-->
+                    <!--                    android:text="주차위치"/>-->
+
+                    <!--                <Button-->
+                    <!--                    android:id="@+id/btn_searchAround"-->
+                    <!--                    android:textColor="#f1c40f"-->
+                    <!--                    android:backgroundTint="#2c3e50"-->
+                    <!--                    android:layout_width="100dp"-->
+                    <!--                    android:layout_height="40dp"-->
+                    <!--                    android:layout_marginRight="10dp"-->
+                    <!--                    android:text="주변검색"/>-->
+
+
+                    <ImageButton
+                        android:id="@+id/btn_timer_start"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginRight="50dp"
+                        android:background="@drawable/startride_icon"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_myBicycle"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginRight="50dp"
+                        android:background="@drawable/parking_icon"/>
+
+                    <ImageButton
+                        android:id="@+id/btn_searchAround"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:background="@drawable/search_icon"/>
+
+                    <Button
+                        android:id="@+id/btn_review"
+                        android:textColor="#f1c40f"
+                        android:backgroundTint="#2c3e50"
+                        android:layout_width="100dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="10dp"
+                        android:text="리뷰"/>
+
+
+                    <!--            <Button-->
+                    <!--                android:id="@+id/btn_timer_finish"-->
+                    <!--                android:layout_width="100dp"-->
+                    <!--                android:layout_height="40dp"-->
+                    <!--                android:layout_marginRight="10dp"-->
+                    <!--                android:textColor="#f1c40f"-->
+                    <!--                android:backgroundTint="#2c3e50"-->
+                    <!--                android:text="주행 종료"/>-->
+
+                    <!--            <Button-->
+                    <!--                android:id="@+id/btn_timer_reset"-->
+                    <!--                android:layout_width="100dp"-->
+                    <!--                android:layout_height="40dp"-->
+                    <!--                android:layout_marginRight="10dp"-->
+                    <!--                android:textColor="#f1c40f"-->
+                    <!--                android:backgroundTint="#2c3e50"-->
+                    <!--                android:text="기록 초기화"-->
+                    <!--                />-->
+
+                </LinearLayout>
+
+            </FrameLayout>
+        </FrameLayout>
 </LinearLayout>

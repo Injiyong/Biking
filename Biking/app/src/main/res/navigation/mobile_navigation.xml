@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="cau.injiyong.biking.ui.home.HomeFragment"
-        android:label="Home"
+        android:label="메인화면"
         tools:layout="@layout/fragment_home" />
 
     <fragment

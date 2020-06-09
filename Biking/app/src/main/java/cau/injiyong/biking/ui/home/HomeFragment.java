@@ -23,6 +23,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -136,6 +138,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     LinearLayout layout;
     /* 다인변수 끝 */
 
+    FrameLayout searchAroundLayout;
 
     String userID;
     FirebaseDatabase database;
@@ -165,20 +168,68 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         Common.current_location=location;  /* 날씨에 위치 넘겨주는 코드 */
 
-        Button button_myBicycle = (Button) rootView.findViewById(R.id.btn_myBicycle);
+        /* 주변검색 버튼 */
+        final EditText searchEditText = (EditText) rootView.findViewById(R.id.search_edit);
+        ImageButton button_myBicycle = (ImageButton) rootView.findViewById(R.id.btn_myBicycle);
         button_myBicycle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { MyBicycle(); }});
 
-        Button button_searchAround = (Button) rootView.findViewById(R.id.btn_searchAround);
+        ImageButton button_store = (ImageButton) rootView.findViewById(R.id.btn_store);
+        button_store.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { SearchAround("편의점");
+            }});
+
+        ImageButton button_hospital = (ImageButton) rootView.findViewById(R.id.btn_hospital);
+        button_hospital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchAround("병원");
+            }});
+
+        ImageButton button_bicycle = (ImageButton) rootView.findViewById(R.id.btn_bicycle);
+        button_bicycle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SearchAround("자전거");
+            }});
+
+        ImageButton button_search = (ImageButton) rootView.findViewById(R.id.btn_search);
+        button_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchText = searchEditText.getText().toString();
+                SearchAround(searchText);
+            }});
+
+
+        ImageButton button_searchAround = (ImageButton) rootView.findViewById(R.id.btn_searchAround);
         button_searchAround.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { SearchAround(); }});
+            public void onClick(View v) {
+                if (searchAroundLayout.getVisibility() == View.GONE) {
+                    if (tv_timer.getVisibility() == View.VISIBLE) {
+                        tv_timer.setVisibility(View.INVISIBLE);
+                        tv_distance.setVisibility(View.INVISIBLE);
+                        tv_avg_speed.setVisibility(View.INVISIBLE);
+                    }
+                    searchAroundLayout.setVisibility(View.VISIBLE);
+                }
+                else {
+                    searchAroundLayout.setVisibility(View.GONE);
+                    if (tv_timer.getVisibility() == View.INVISIBLE) {
+                        tv_timer.setVisibility(View.VISIBLE);
+                        tv_distance.setVisibility(View.VISIBLE);
+                        tv_avg_speed.setVisibility(View.VISIBLE);
+                    }
+                }
 
-//        Button button_start = (Button) rootView.findViewById(R.id.btn_start);
-//        button_start.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { StartGuidance(); }});
+                //SearchAround();
+            }});
+
+        searchAroundLayout = (FrameLayout)rootView.findViewById(R.id.search_around_layout);
+        searchAroundLayout.setVisibility(View.GONE);
 
         layout = (LinearLayout)rootView.findViewById(R.id.layout);
         Button button_start = (Button) rootView.findViewById(R.id.btn_review);
@@ -250,7 +301,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tv_distance.setVisibility(View.GONE);
         tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
         tv_avg_speed.setVisibility(View.GONE);
-        final Button btn_timer_start = (Button) rootView.findViewById(R.id.btn_timer_start);
+        final ImageButton btn_timer_start = (ImageButton) rootView.findViewById(R.id.btn_timer_start);
         btn_timer_start.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -381,8 +432,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 //                        //최근 주행 기록 정보 넘기는 부분
 //                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),s_adress,f_adress);
 //                        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
-                        btn_timer_start.setText("주행시작");
 
+                        //btn_timer_start.setText("주행시작");
+                        btn_timer_start.setBackgroundResource(R.drawable.startride_icon);
                         //Toast.makeText(getActivity(), "타이머를 리셋합니다.", Toast.LENGTH_SHORT).show();
 
                         /* Timer Handler 제거 */
@@ -521,12 +573,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         time_handler.sendEmptyMessage(0);
 
                         // 타이머를 시작한다.
+                        if (searchAroundLayout.getVisibility() == View.VISIBLE) searchAroundLayout.setVisibility(View.GONE);
                         tv_timer.setVisibility(View.VISIBLE);
                         tv_distance.setVisibility(View.VISIBLE);
                         tv_avg_speed.setVisibility(View.VISIBLE);
                         Toast.makeText(getActivity(), "주행을 시작합니다.", Toast.LENGTH_SHORT).show();
-                        btn_timer_start.setText("주행종료");
-
+                        // btn_timer_start.setText("주행종료");
+                        btn_timer_start.setBackgroundResource(R.drawable.endride_icon);
                         // Flag 설정
                         isBtnClickStart = true;
 
@@ -986,87 +1039,117 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     }
 
     /* 주변 검색 메소드 */
-    public void SearchAround() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("주변 검색");
+    public void SearchAround(final String strData) {
 
-        final EditText input = new EditText(getContext());
-
-        final List<String> ListItems = new ArrayList<>();
-        ListItems.add("편의점");
-        ListItems.add("병원");
-        ListItems.add("자전거");
-        final CharSequence[] items =  ListItems.toArray(new String[ListItems.size()]);
-
-        builder.setView(input);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int pos) {
-                final String selectedText = items[pos].toString();
-                TMapData tMapData = new TMapData();
-                TMapPoint tPoint = tmapview.getLocationPoint();
-                //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
-                tMapData.findAroundNamePOI(tPoint, selectedText, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
-                    @Override
-                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
-                        for(int i = 0; i < poiItem.size(); i++) {
-                            TMapPOIItem item = poiItem.get(i);
-
-                            TMapMarkerItem markerItem = new TMapMarkerItem();
-                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
-                            markerItem.setIcon(bitmap); // 마커 아이콘 지정
-                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
-                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
-                            markerItem.setName(selectedText); // 마커의 타이틀 지정
-                            markerItem.setCanShowCallout(true);
-                            markerItem.setCalloutTitle(selectedText);
-                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
-                            System.out.println(item.getPOIPoint());
-                        }
-                    }
-                });
-            }
-        });
-        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        TMapData tMapData = new TMapData();
+        //TMapPoint tPoint = tmapview.getLocationPoint();
+        TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+        tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                final String strData = input.getText().toString();
-                TMapData tMapData = new TMapData();
-                //TMapPoint tPoint = tmapview.getLocationPoint();
-                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
-                tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
-                    @Override
-                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
-                        for(int i = 0; i < poiItem.size(); i++) {
-                            TMapPOIItem item = poiItem.get(i);
+            public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
+                for(int i = 0; i < poiItem.size(); i++) {
+                    TMapPOIItem item = poiItem.get(i);
 
-                            TMapMarkerItem markerItem = new TMapMarkerItem();
-                            //Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
-                            markerItem.setIcon(item.Icon); // 마커 아이콘 지정
-                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
-                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
-                            markerItem.setName(strData); // 마커의 타이틀 지정
-
-                            markerItem.setCanShowCallout(true);
-                            markerItem.setCalloutTitle("(" + Double.toString(Double.parseDouble(item.radius) * 1000) + "m)  " + item.name);
-                            markerItem.setCalloutSubTitle(item.upperAddrName + " " + item.middleAddrName + " " + item.lowerAddrName);
-                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.findpath_icon);
-                            markerItem.setCalloutRightButtonImage(bitmap);
-                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
-                            System.out.println(item.getPOIPoint());
-                        }
-                    }
-                });
+                    TMapMarkerItem markerItem = new TMapMarkerItem();
+                    markerItem.setIcon(item.Icon); // 마커 아이콘 지정
+                    markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                    markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
+                    markerItem.setName(strData); // 마커의 타이틀 지정
+                    markerItem.setCanShowCallout(true);
+                    markerItem.setCalloutTitle("(" + Double.toString(Double.parseDouble(item.radius) * 1000) + "m)  " + item.name);
+                    markerItem.setCalloutSubTitle(item.upperAddrName + " " + item.middleAddrName + " " + item.lowerAddrName);
+                    Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.findpath_icon);
+                    markerItem.setCalloutRightButtonImage(bitmap);
+                    tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+                    //System.out.println(item.getPOIPoint());
+                }
             }
         });
 
-        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        builder.show();
     }
+
+//    /* 주변 검색 메소드 */
+//    public void SearchAround() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        builder.setTitle("주변 검색");
+//
+//        final EditText input = new EditText(getContext());
+//
+//        final List<String> ListItems = new ArrayList<>();
+//        ListItems.add("편의점");
+//        ListItems.add("병원");
+//        ListItems.add("자전거");
+//        final CharSequence[] items =  ListItems.toArray(new String[ListItems.size()]);
+//
+//        builder.setView(input);
+//        builder.setItems(items, new DialogInterface.OnClickListener() {
+//            public void onClick(DialogInterface dialog, int pos) {
+//                final String selectedText = items[pos].toString();
+//                TMapData tMapData = new TMapData();
+//                TMapPoint tPoint = tmapview.getLocationPoint();
+//                //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+//                tMapData.findAroundNamePOI(tPoint, selectedText, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
+//                    @Override
+//                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
+//                        for(int i = 0; i < poiItem.size(); i++) {
+//                            TMapPOIItem item = poiItem.get(i);
+//
+//                            TMapMarkerItem markerItem = new TMapMarkerItem();
+//                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
+//                            markerItem.setIcon(bitmap); // 마커 아이콘 지정
+//                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+//                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
+//                            markerItem.setName(selectedText); // 마커의 타이틀 지정
+//                            markerItem.setCanShowCallout(true);
+//                            markerItem.setCalloutTitle(selectedText);
+//                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+//                            System.out.println(item.getPOIPoint());
+//                        }
+//                    }
+//                });
+//            }
+//        });
+//        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                final String strData = input.getText().toString();
+//                TMapData tMapData = new TMapData();
+//                //TMapPoint tPoint = tmapview.getLocationPoint();
+//                TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+//                tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
+//                    @Override
+//                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
+//                        for(int i = 0; i < poiItem.size(); i++) {
+//                            TMapPOIItem item = poiItem.get(i);
+//
+//                            TMapMarkerItem markerItem = new TMapMarkerItem();
+//                            //Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_dot);
+//                            markerItem.setIcon(item.Icon); // 마커 아이콘 지정
+//                            markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+//                            markerItem.setTMapPoint(item.getPOIPoint()); // 마커의 좌표 지정
+//                            markerItem.setName(strData); // 마커의 타이틀 지정
+//
+//                            markerItem.setCanShowCallout(true);
+//                            markerItem.setCalloutTitle("(" + Double.toString(Double.parseDouble(item.radius) * 1000) + "m)  " + item.name);
+//                            markerItem.setCalloutSubTitle(item.upperAddrName + " " + item.middleAddrName + " " + item.lowerAddrName);
+//                            Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.findpath_icon);
+//                            markerItem.setCalloutRightButtonImage(bitmap);
+//                            tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+//                            System.out.println(item.getPOIPoint());
+//                        }
+//                    }
+//                });
+//            }
+//        });
+//
+//        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//        builder.show();
+//    }
 
     /* 도착지주소 검색 메소드 */
     public void SearchDestination() {
