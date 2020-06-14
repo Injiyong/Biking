@@ -122,7 +122,10 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
     };
 
     public void findPathButtonClickListener(){
+//        HomeFragment.setPath("dd","dd");
+//        ((MainActivity)getActivity()).replaceFragment(HomeFragment.newInstance());
+
+        ((MainActivity)getActivity()).popFragment(HomeFragment.newInstance());
         HomeFragment.setPath("dd","dd");
-        ((MainActivity)getActivity()).replaceFragment(HomeFragment.newInstance());
     }
 }

@@ -162,7 +162,10 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         if(startpath!=null) {
             TMapPoint start = new TMapPoint(37.570841, 126.985302);
             TMapPoint dest =  new TMapPoint(37.572592, 126.990507);
-            StartGuidance(start,dest);}
+            StartGuidance(start,dest);
+            startpath = null;
+            destpath = null;
+        }
 
         setGps();
         setMap();
@@ -875,6 +878,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         // 음성안내 data~~
 
+        descripList.clear();
+        mapPoint.clear();
+
         tmapdata.findPathDataAllType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataAllListenerCallback() {
 
             @Override
@@ -1146,8 +1152,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 f_adress=list2.get(0).getAddressLine(0);
             }
         }
-
     }
-
 
 }

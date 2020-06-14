@@ -128,4 +128,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.nav_host_fragment, fragment).commit();
     }
 
+    public void popFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().remove(FindPathFragment.newInstance()).commit();
+        fragmentManager.popBackStack();
+    }
+
+
 }
