@@ -23,6 +23,7 @@ public class AutoCompleteParse extends AsyncTask<String, Void, ArrayList<SearchE
     private ArrayList<SearchEntity> mListData;
     private FindPathAdapter mAdapter;
 
+
     public AutoCompleteParse(FindPathAdapter adapter) {
         this.mAdapter = adapter;
         mListData = new ArrayList<SearchEntity>();

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,8 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
 
 
-    private EditText editText;
-    private EditText editText_dest;
+    static EditText editText;
+    static EditText editText_dest;
     private Button btn_find_path;
     private RecyclerView recyclerView_findpath;
     private FindPathAdapter adapter;
@@ -83,6 +84,13 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
     public void showToast(int position) {
 
         Toast.makeText(getContext(), position + " clicked.", Toast.LENGTH_SHORT).show();
+
+    }
+
+    public static void setEditText(String text){
+
+        editText.setText(text);
+
 
     }
 

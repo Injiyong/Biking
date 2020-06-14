@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:background="#ffffff"/>
+
     </LinearLayout>
 
     <LinearLayout
@@ -51,7 +52,7 @@
             android:layout_marginLeft="10dp"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:background="#ffffff"/>
+            android:background="#ffffff" />
     </LinearLayout>
 
     <Button
@@ -76,5 +77,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_margin="8dp"/>
+
 
 </LinearLayout>
