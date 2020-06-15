@@ -262,7 +262,18 @@
                     <!--                />-->
 
                 </LinearLayout>
-
             </FrameLayout>
+
+            <Button
+                android:id="@+id/btn_demo"
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:layout_margin="40dp"
+                android:layout_gravity="center|right"
+                android:textColor="#f1c40f"
+                android:backgroundTint="#2c3e50"
+                android:text="DEMO" />
+
+
         </FrameLayout>
 </LinearLayout>

@@ -133,6 +133,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String s_time;
     ArrayList descripList = new ArrayList();
     ArrayList mapPoint = new ArrayList();
+
+    ArrayList mapPointJY = new ArrayList();
+
     private TextToSpeech tts;
     ArrayList<TMapPoint> alTMapPoint2;
     LinearLayout layout;
@@ -159,15 +162,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         tmapview = (TMapView)rootView.findViewById(R.id.tmapmap);
 
-        if(startpath!=null) {
+        setGps();
+        setMap();
 
+        if(startpath!=null) {
+            tmapview.setTrackingMode(false); // 주행시작하면 다시 켜야함
+            tmapview.setCenterPoint(startpath.getLongitude(), startpath.getLatitude());
             StartGuidance(startpath,destpath);
             startpath = null;
             destpath = null;
         }
-
-        setGps();
-        setMap();
 
         Common.current_location=location;  /* 날씨에 위치 넘겨주는 코드 */
 
@@ -212,11 +216,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 SearchAround(searchText);
             }});
 
-
         ImageButton button_searchAround = (ImageButton) rootView.findViewById(R.id.btn_searchAround);
         button_searchAround.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (searchAroundLayout.getVisibility() == View.GONE) {
                     if (tv_timer.getVisibility() == View.VISIBLE) {
                         tv_timer.setVisibility(View.INVISIBLE);
@@ -236,6 +240,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                 //SearchAround();
             }});
+
 
         searchAroundLayout = (FrameLayout)rootView.findViewById(R.id.search_around_layout);
         searchAroundLayout.setVisibility(View.GONE);
@@ -347,6 +352,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             }
         });
         // ~~ 주행시작
+
+        Button button_demo = (Button) rootView.findViewById(R.id.btn_demo);
+        button_demo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SoundNotification(getCount());
+            }});
 
         return rootView;
     }
@@ -784,8 +796,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         return strRef;
     }
 
-
-
     /* 도착지주소 선택 메소드*/
     public void ClickDestination() {
         Toast.makeText(getContext(), "원하시는 도착 지점을 터치한 후 길안내 시작버튼을 눌러주세요.", Toast.LENGTH_SHORT).show();
@@ -831,7 +841,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         TMapData tmapdata = new TMapData();
 
 
-        tmapdata.findPathDataWithType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
+        tmapdata.findPathDataWithType(TMapData.TMapPathType.PEDESTRIAN_PATH, point1, point2, new TMapData.FindPathDataListenerCallback() {
             @Override
             public void onFindPathData(TMapPolyLine polyLine) {
                 polyLine1 = polyLine;
@@ -847,7 +857,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         descripList.clear();
         mapPoint.clear();
 
-        tmapdata.findPathDataAllType(TMapData.TMapPathType.CAR_PATH, point1, point2, new TMapData.FindPathDataAllListenerCallback() {
+        tmapdata.findPathDataAllType(TMapData.TMapPathType.PEDESTRIAN_PATH, point1, point2, new TMapData.FindPathDataAllListenerCallback() {
 
             @Override
             public void onFindPathDataAll(Document document) {
@@ -857,23 +867,24 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 for( int i=0; i<nodeListPlacemark.getLength(); i++ ) {
                     NodeList nodeListPlacemarkItem = nodeListPlacemark.item(i).getChildNodes();
 
-                    for(int a=0; a<nodeListPlacemarkItem.getLength(); a++ ){
-                        if(nodeListPlacemarkItem.item(a).getNodeName().equals("coordinates")){
-                            Log.d("debug1", nodeListPlacemarkItem.item(a).getTextContent().trim() );
-                        }
-                    }
                     for( int j=0; j<nodeListPlacemarkItem.getLength(); j++ ) {
-                        if( nodeListPlacemarkItem.item(j).getNodeName().equals("description") ) {
-                            Log.d("debug2", nodeListPlacemarkItem.item(j).getTextContent().trim() );
-                            descripList.add(nodeListPlacemarkItem.item(j).getTextContent().trim());
+                        if( nodeListPlacemarkItem.item(j).getNodeName().equals("Point")) {
+                            for( int k=0; k<nodeListPlacemarkItem.getLength(); k++ ) {
+                                if( nodeListPlacemarkItem.item(k).getNodeName().equals("description")) {
+                                    Log.d("debug2", nodeListPlacemarkItem.item(k).getTextContent().trim() );
+                                    descripList.add(nodeListPlacemarkItem.item(k).getTextContent().trim());
+                                    mapPointJY.add(nodeListPlacemarkItem.item(j).getTextContent().trim());
+                                }
+                            }
 
                         }
                     }
-                    for( int k=0; k<nodeListPlacemarkItem.getLength(); k++ ) {
-                        if( nodeListPlacemarkItem.item(k).getNodeName().equals("tmap:turnType") ) {
-                            Log.d("debug turnType" + k, nodeListPlacemarkItem.item(k).getTextContent().trim() );
-                        }
-                    }
+
+//                    for( int k=0; k<nodeListPlacemarkItem.getLength(); k++ ) {
+//                        if( nodeListPlacemarkItem.item(k).getNodeName().equals("tmap:turnType") ) {
+//                            Log.d("debug turnType" + k, nodeListPlacemarkItem.item(k).getTextContent().trim() );
+//                        }
+//                    }
                 }
 
                 NodeList list = root.getElementsByTagName("Point"); // 노드 타입이 Ponit 일 때
@@ -895,7 +906,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                                 mapPoint.add(str4[da+1]);
                                 mapPoint.add(str4[da]);
-
 //                            TMapMarkerItem markerItem = new TMapMarkerItem();
 //                            TMapPoint tMapPoint1 = new TMapPoint(Double.parseDouble(str3[j+1]),Double.parseDouble(str3[j]));
 //                            Bitmap startride = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.poi_dot);
@@ -943,39 +953,39 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tmapview.setTMapPathIcon(start, end);
         tmapview.zoomToTMapPoint(point1, point2);
 
-        // 음성안내 ~~
-
-        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != ERROR) {
-                    // 언어를 선택한다.
-                    tts.setLanguage(Locale.KOREAN);
-                }
-            }
-        });
-        int i=0,j=0;
-        double latitude,longitude;
-
-        for(i=0;i<mapPoint.size();i++){
-            String lat=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
-            i++;
-            String lon=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
-
-            while(true){
-                latitude = (location.getLatitude()*10000)/10000;
-                longitude = (location.getLongitude()*10000)/10000;
-                Log.d("voicelat", String.valueOf(latitude));
-                Log.d("voicelong", String.valueOf(longitude));
-                if(String.valueOf(latitude)==lat && String.valueOf(longitude)==lon){
-                    String descrip = ObjToString(descripList.get(j));
-                    j++;
-                    tts.speak(descrip,TextToSpeech.QUEUE_FLUSH, null);
-                    break;
-                }
-            }
-
-        }
+//        // 음성안내 ~~
+//
+//        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+//            @Override
+//            public void onInit(int status) {
+//                if(status != ERROR) {
+//                    // 언어를 선택한다.
+//                    tts.setLanguage(Locale.KOREAN);
+//                }
+//            }
+//        });
+//        int i=0,j=0;
+//        double latitude,longitude;
+//
+//        for(i=0;i<mapPoint.size();i++){
+//            String lat=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
+//            i++;
+//            String lon=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
+//
+//            while(true){
+//                latitude = (location.getLatitude()*10000)/10000;
+//                longitude = (location.getLongitude()*10000)/10000;
+//                Log.d("voicelat", String.valueOf(latitude));
+//                Log.d("voicelong", String.valueOf(longitude));
+//                if(String.valueOf(latitude)==lat && String.valueOf(longitude)==lon){
+//                    String descrip = ObjToString(descripList.get(j));
+//                    j++;
+//                    tts.speak(descrip,TextToSpeech.QUEUE_FLUSH, null);
+//                    break;
+//                }
+//            }
+//
+//        }
 
         // startRide();
         // ~~ 음성안내
@@ -1120,4 +1130,37 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         }
     }
 
+    public void SoundNotification(int countD) {
+        System.out.println("desc size = " + descripList.size());
+        System.out.println("mapP size = " + mapPointJY.size());
+
+        System.out.println("desc" +  countD + " : " + descripList.get(countD));
+        System.out.println("mapP" +  countD + " : " + mapPointJY.get(countD));
+
+        String[] longLat = mapPointJY.get(countD).toString().split(",");
+        TMapMarkerItem markerItem = new TMapMarkerItem();
+        Bitmap startride = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.poi_dot);
+        markerItem.setIcon(startride); // 마커 아이콘 지정
+        markerItem.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+        markerItem.setTMapPoint(new TMapPoint(Double.parseDouble(longLat[1]),Double.parseDouble(longLat[0]))); // 마커의 좌표 지정
+        markerItem.setName("turnType"); // 마커의 타이틀 지정
+        tmapview.addMarkerItem("markerItem", markerItem); // 지도에 마커 추가
+
+        final String text = descripList.get(countD).toString();
+        tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int language = tts.setLanguage(Locale.KOREAN);
+                    tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                } else Toast.makeText(getContext(), "TTS 실패!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    static int cnt = 0;
+    int getCount() {
+        if (cnt >= descripList.size() - 1) return cnt;
+        return cnt++;
+    }
 }
