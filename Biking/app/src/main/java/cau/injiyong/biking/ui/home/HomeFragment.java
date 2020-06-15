@@ -150,8 +150,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String s_adress;
     String f_adress;
 
-    static String startpath;
-    static String destpath;
+    static TMapPoint startpath;
+    static TMapPoint destpath;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -160,9 +160,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tmapview = (TMapView)rootView.findViewById(R.id.tmapmap);
 
         if(startpath!=null) {
-            TMapPoint start = new TMapPoint(37.570841, 126.985302);
-            TMapPoint dest =  new TMapPoint(37.572592, 126.990507);
-            StartGuidance(start,dest);
+
+            StartGuidance(startpath,destpath);
             startpath = null;
             destpath = null;
         }
@@ -1078,7 +1077,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     }
 
     /*길찾기 주소 setting*/
-    public static void setPath(String start, String dest){
+    public static void setPath(TMapPoint start, TMapPoint dest){
         startpath=start;
         destpath=dest;
 

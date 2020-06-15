@@ -79,7 +79,7 @@ public class AutoCompleteParse extends AsyncTask<String, Void, ArrayList<SearchE
                 String fullAddr = poi.get(i).getUpperAddrName() + " " + poi.get(i).getMiddleAddrName() +
                         " " + poi.get(i).getLowerAddrName() + " " + poi.get(i).getDetailAddrName();
 
-                mListData.add(new SearchEntity(poi.get(i).getName(), fullAddr));
+                mListData.add(new SearchEntity(poi.get(i).getName(), fullAddr,poi.get(i).getFrontLat(),poi.get(i).getFrontLon()));
             }
 
         }catch (IOException e){

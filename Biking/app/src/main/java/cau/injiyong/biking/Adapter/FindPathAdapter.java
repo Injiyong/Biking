@@ -1,6 +1,7 @@
 package cau.injiyong.biking.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import cau.injiyong.biking.AutoCompleteParse;
+import cau.injiyong.biking.FindPathFragment;
 import cau.injiyong.biking.R;
 import cau.injiyong.biking.RecyclerViewAdapterCallback;
 import cau.injiyong.biking.SearchEntity;
@@ -19,6 +21,7 @@ import cau.injiyong.biking.SearchEntity;
 public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHolder> {
 
     Context context;
+    int view;
     private ArrayList<SearchEntity> itemLists = new ArrayList<>();
     private RecyclerViewAdapterCallback callback;
 
@@ -28,7 +31,6 @@ public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHo
         public TextView title;
         public TextView address;
 
-
         public ViewHolder(View view) {
             super(view);
             title = (TextView) itemView.findViewById(R.id.tv_title);
@@ -36,9 +38,10 @@ public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHo
         }
     }
 
-    public FindPathAdapter(Context context) {
+    public FindPathAdapter(Context context,int v) {
 
         this.context=context;
+        this.view=v;
 
     }
 
@@ -69,7 +72,7 @@ public class FindPathAdapter extends RecyclerView.Adapter<FindPathAdapter.ViewHo
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.showToast(ItemPosition);
+                    FindPathFragment.setEditText(view,itemLists.get(ItemPosition).getTitle(),itemLists.get(ItemPosition).getLat(),itemLists.get(ItemPosition).getLon());
                 }
             });
         }

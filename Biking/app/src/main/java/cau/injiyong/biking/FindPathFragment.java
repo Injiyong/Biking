@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.skt.Tmap.TMapPoint;
+
 import cau.injiyong.biking.Adapter.FindPathAdapter;
 import cau.injiyong.biking.ui.home.HomeFragment;
 
@@ -33,11 +35,17 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
     static EditText editText;
     static EditText editText_dest;
     private Button btn_find_path;
-    private RecyclerView recyclerView_findpath;
     private FindPathAdapter adapter;
+    private FindPathAdapter adapter_dest;
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable workRunnable;
     private final long DELAY = 500;
+    static RecyclerView recyclerView_findpath;
+    static RecyclerView recyclerView_findpath_dest;
+    static String startLat;
+    static String startLon;
+    static String finishLat;
+    static String finishLon;
 
     public static FindPathFragment newInstance() {
         return new FindPathFragment();
@@ -57,20 +65,28 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
         btn_find_path=root.findViewById(R.id.btn_find_path);
 
         recyclerView_findpath = root.findViewById(R.id.recyclerview_findpath);
+        recyclerView_findpath_dest = root.findViewById(R.id.recyclerview_findpath_dest);
+
 
         editText.addTextChangedListener(watcher);
-        editText_dest.addTextChangedListener(watcher);
+        editText_dest.addTextChangedListener(watcher_dest);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        adapter = new FindPathAdapter(getContext());
+        adapter = new FindPathAdapter(getContext(),R.id.edt_search);
+        adapter_dest = new FindPathAdapter(getContext(),R.id.edt_dest_search);
+
         recyclerView_findpath.setLayoutManager(layoutManager);
         recyclerView_findpath.setAdapter(adapter);
+
+        recyclerView_findpath_dest.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView_findpath_dest.setAdapter(adapter_dest);
 
         adapter.setCallback(this);
 
         btn_find_path.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { findPathButtonClickListener(); }});
+
 
         return root;
     }
@@ -87,9 +103,21 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
     }
 
-    public static void setEditText(String text){
+    public static void setEditText(int v,String text,String lat,String lon){
 
-        editText.setText(text);
+        if(v==R.id.edt_search)  {
+            editText.setText(text);
+            startLat=lat;
+            startLon=lon;
+            recyclerView_findpath.setVisibility(View.INVISIBLE);
+
+        }
+        else  {
+            editText_dest.setText(text);
+            finishLat=lat;
+            finishLon=lon;
+            recyclerView_findpath_dest.setVisibility(View.INVISIBLE);
+        }
 
 
     }
@@ -102,11 +130,13 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-
         }
 
         @Override
         public void afterTextChanged(Editable s) {
+
+            recyclerView_findpath_dest.setVisibility(View.INVISIBLE);
+            recyclerView_findpath.setVisibility(View.VISIBLE);
 
             final String keyword = s.toString();
 
@@ -121,11 +151,42 @@ public class FindPathFragment extends Fragment implements RecyclerViewAdapterCal
         }
     };
 
-    public void findPathButtonClickListener(){
-//        HomeFragment.setPath("dd","dd");
-//        ((MainActivity)getActivity()).replaceFragment(HomeFragment.newInstance());
+    TextWatcher watcher_dest = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            recyclerView_findpath.setVisibility(View.INVISIBLE);
+            recyclerView_findpath_dest.setVisibility(View.VISIBLE);
+
+            final String keyword = s.toString();
+
+            handler.removeCallbacks(workRunnable);
+            workRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    adapter_dest.filter(keyword);
+                }
+            };
+            handler.postDelayed(workRunnable, DELAY);
+        }
+    };
+
+    public void findPathButtonClickListener(){
+
+        TMapPoint start = new TMapPoint(Double.valueOf(startLat),Double.valueOf(startLon));
+        TMapPoint finish = new TMapPoint(Double.valueOf(finishLat),Double.valueOf(finishLon));
         ((MainActivity)getActivity()).popFragment(HomeFragment.newInstance());
-        HomeFragment.setPath("dd","dd");
+        HomeFragment.setPath(start,finish);
     }
+
 }
