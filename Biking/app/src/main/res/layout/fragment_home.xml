@@ -74,12 +74,23 @@
             android:layout_alignParentLeft="true"
             android:textColor="#2c3e50"
             android:text="현재속도 : 0 km/h" />
+        <Button
+            android:id="@+id/btn_review"
+            android:textColor="#f1c40f"
+            android:backgroundTint="#2c3e50"
+            android:layout_marginTop="145dp"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="300dp"
+            android:text="도로 평가"/>
+
 
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="150dp">
+            android:layout_marginTop="190dp">
             <LinearLayout
                 android:id="@+id/layout"
                 android:layout_width="wrap_content"
@@ -232,14 +243,6 @@
                         android:layout_height="70dp"
                         android:background="@drawable/search_icon"/>
 
-                    <Button
-                        android:id="@+id/btn_review"
-                        android:textColor="#f1c40f"
-                        android:backgroundTint="#2c3e50"
-                        android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="10dp"
-                        android:text="리뷰"/>
 
 
                     <!--            <Button-->

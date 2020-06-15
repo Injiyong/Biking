@@ -111,6 +111,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
     /* 다인변수 시작 */
     private TextView tv_timer,tv_distance,tv_avg_speed;
+    Button button_start;
+    ImageButton btn_timer_start;
     private boolean isReset=true;
     private boolean isBtnClickStart;
     private Handler time_handler;
@@ -165,10 +167,23 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         setGps();
         setMap();
 
+        button_start = (Button) rootView.findViewById(R.id.btn_review);
+        button_start.setVisibility(View.GONE);
+        tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
+        tv_timer.setVisibility(View.GONE);
+        tv_distance = (TextView)rootView.findViewById(R.id.tv_distance);
+        tv_distance.setVisibility(View.GONE);
+        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
+        tv_avg_speed.setVisibility(View.GONE);
+        btn_timer_start = (ImageButton) rootView.findViewById(R.id.btn_timer_start);
+
+
         if(startpath!=null) {
             tmapview.setTrackingMode(false); // 주행시작하면 다시 켜야함
             tmapview.setCenterPoint(startpath.getLongitude(), startpath.getLatitude());
             StartGuidance(startpath,destpath);
+            button_start.setVisibility(View.VISIBLE);
+            startRide();
             startpath = null;
             destpath = null;
         }
@@ -246,7 +261,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         searchAroundLayout.setVisibility(View.GONE);
 
         layout = (LinearLayout)rootView.findViewById(R.id.layout);
-        Button button_start = (Button) rootView.findViewById(R.id.btn_review);
         button_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,12 +271,14 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
                 }
 
+                final Button [] button = new Button[arr.length-1];
+
                 for(int k=0; k<arr.length - 1; k++){
                     final int a=k;
-                    Button button = new Button(getActivity().getApplicationContext());
-                    button.setText("도로 "+String.valueOf(k+1));
-                    button.setTextColor(Color.parseColor("#f1c40f"));
-                    button.setOnClickListener(new View.OnClickListener() {
+                    button[a] = new Button(getActivity().getApplicationContext());
+                    button[a].setText("도로 "+String.valueOf(k+1));
+                    button[a].setTextColor(Color.parseColor("#2c3e50"));
+                    button[a].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Toast.makeText(getActivity().getApplicationContext(),"Toast. ", Toast.LENGTH_SHORT).show();
@@ -290,10 +306,25 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             });
                         }
                     });
-                    layout.addView(button);
-
-
+                    layout.addView(button[a]);
                 }
+                final Button button_end_review = new Button(getActivity().getApplicationContext());
+                button_end_review.setText("평가 종료");
+                button_end_review.setTextColor(Color.parseColor("#2c3e50"));
+                button_end_review.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // 도로평가저장 DB
+
+                        for(int i=0;i<arr.length-1;i++){
+                            button[i].setVisibility(View.GONE);
+                        }
+                        button_start.setVisibility(View.GONE);
+                        button_end_review.setVisibility(View.GONE);
+                    }
+                });
+                layout.addView(button_end_review);
+
 
             }});
 
@@ -315,13 +346,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         /* 다인주행 시작 */
         // 주행시작 ~~
-        tv_timer = (TextView)rootView.findViewById(R.id.tv_timer);
-        tv_timer.setVisibility(View.GONE);
-        tv_distance = (TextView)rootView.findViewById(R.id.tv_distance);
-        tv_distance.setVisibility(View.GONE);
-        tv_avg_speed = (TextView)rootView.findViewById(R.id.tv_avg_speed);
-        tv_avg_speed.setVisibility(View.GONE);
-        final ImageButton btn_timer_start = (ImageButton) rootView.findViewById(R.id.btn_timer_start);
         btn_timer_start.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -387,6 +411,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     }
 
     public void startRide(){
+        btn_timer_start.setBackgroundResource(R.drawable.endride_icon);
         /* 타이머를 위한 Handler */
         time_handler = new Handler() {
 
@@ -496,12 +521,11 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         // 타이머를 시작한다.
         if (searchAroundLayout.getVisibility() == View.VISIBLE) searchAroundLayout.setVisibility(View.GONE);
-        tv_timer.setVisibility(View.VISIBLE);
-        tv_distance.setVisibility(View.VISIBLE);
-        tv_avg_speed.setVisibility(View.VISIBLE);
+
         Toast.makeText(getActivity(), "주행을 시작합니다.", Toast.LENGTH_SHORT).show();
         // btn_timer_start.setText("주행종료");
         // Flag 설정
+        setVisible();
         isBtnClickStart = true;
 
         // GPS 설정
@@ -552,6 +576,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     }
 
     public void endRide(){
+
+        btn_timer_start.setBackgroundResource(R.drawable.startride_icon);
         //GPS 저장
         // GpsInfo gps = new GpsInfo(getActivity());
         // GPS 사용유무 가져오기
@@ -780,6 +806,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         builder.show();
     }
 
+    public void setVisible(){
+        tv_timer.setVisibility(View.VISIBLE);
+        tv_distance.setVisibility(View.VISIBLE);
+        tv_avg_speed.setVisibility(View.VISIBLE);
+    }
+
     private String ObjToString(Object p)
     {
         String strRef = "";
@@ -834,6 +866,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     /* 경로찾기 메소드 */
     public void StartGuidance(TMapPoint point1, TMapPoint point2) {
         tmapview.removeTMapPath();
+        button_start.setVisibility(View.VISIBLE);
 
         //TMapPoint point1 = tmapview.getLocationPoint();
         //TMapPoint point2 = Destination_Point;
