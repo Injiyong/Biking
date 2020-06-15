@@ -172,6 +172,12 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         Common.current_location=location;  /* 날씨에 위치 넘겨주는 코드 */
 
+        /*db setting*/
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("USER_ID");
+        userID=mAuth.getUid();
+
         /* 주변검색 버튼 */
         final EditText searchEditText = (EditText) rootView.findViewById(R.id.search_edit);
         ImageButton button_myBicycle = (ImageButton) rootView.findViewById(R.id.btn_myBicycle);
@@ -568,6 +574,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             f_lat = String.valueOf(latitude);
             f_long = String.valueOf(longitude);
 
+            addressToText();
+
             /* 종료 시간 */
             long now = System.currentTimeMillis();
             Date date = new Date(now);
@@ -578,76 +586,35 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         Toast.makeText(getActivity(), "주행을 종료합니다.", Toast.LENGTH_SHORT).show();
 
 
-//                        /*firebase database 주행 기록 보내기*/
-//                        mAuth = FirebaseAuth.getInstance();
-//                        database = FirebaseDatabase.getInstance();
-//                        myRef = database.getReference("USER_ID");
-//
-//                        userID=mAuth.getUid();
-//
-//                        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//                                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
-//                                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
-//                                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
-//
-//                                if (total_dist.equals("null")) {//데이터 없을 때
-//                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist);
-//                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer);
-//                                }
-//                                else{//데이터 있으면 최근 기록과 더해서 update
-//                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist+Float.parseFloat(total_dist));
-//                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer+Integer.parseInt(total_time));
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//                            }
-//                        });;
+                        /*firebase database 주행 기록 보내기*/
 
-//                        Geocoder geocoder= new Geocoder(getContext());
-//                        List<android.location.Address> list = null;
-//                        List<android.location.Address> list2 = null;
-//                        try {
-//                            //미리 구해놓은 위도값 mLatitude;
-//                            //미리 구해놓은 경도값 mLongitude;
-//
-//                            list = geocoder.getFromLocation(
-//                                    Double.valueOf(s_lat), // 위도
-//                                    Double.valueOf(s_long), // 경도
-//                                    1); // 얻어올 값의 개수
-//                            list2 = geocoder.getFromLocation(
-//                                    Double.valueOf(f_lat), // 위도
-//                                    Double.valueOf(f_long), // 경도
-//                                    1); // 얻어올 값의 개수
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            Log.e("test", "입출력 오류");
-//                        }
-//                        if (list != null) {
-//                            if (list.size()==0) {
-//                                s_adress="해당되는 주소 정보는 없습니다";
-//                            } else {
-//                                s_adress=list.get(0).getAddressLine(0);
-//                                Log.d("wldus",s_adress);
-//                            }
-//                        }
-//                        if (list2 != null) {
-//                            if (list2.size()==0) {
-//                                f_adress="해당되는 주소 정보는 없습니다";
-//                            } else {
-//                                f_adress=list2.get(0).getAddressLine(0);
-//                                Log.d("wldus",s_adress);
-//                            }
-//                        }
-//
-//                        Log.d("wldus",s_adress);
-//                        //최근 주행 기록 정보 넘기는 부분
-//                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),s_adress,f_adress);
-//                        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
+                        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
+                                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
+                                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
+
+                                if (total_dist.equals("null")) {//데이터 없을 때
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist);
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer);
+                                }
+                                else{//데이터 있으면 최근 기록과 더해서 update
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist+Float.parseFloat(total_dist));
+                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer+Integer.parseInt(total_time));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });;
+
+
+                        //최근 주행 기록 정보 넘기는 부분
+                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),s_adress,f_adress);
+                        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
 
         //btn_timer_start.setText("주행시작");
         //Toast.makeText(getActivity(), "타이머를 리셋합니다.", Toast.LENGTH_SHORT).show();
