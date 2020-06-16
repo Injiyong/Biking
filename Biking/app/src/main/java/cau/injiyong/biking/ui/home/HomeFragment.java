@@ -37,6 +37,7 @@ import cau.injiyong.biking.Common.Common;
 import cau.injiyong.biking.CustomDialog;
 import cau.injiyong.biking.R;
 import cau.injiyong.biking.RecentInformationItem;
+import cau.injiyong.biking.RoadInfoItem;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
@@ -152,6 +153,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     String userID;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    DatabaseReference roadRef;
     FirebaseAuth mAuth;
     String total_dist;
     String total_time;
@@ -198,6 +200,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("USER_ID");
+        roadRef = database.getReference("ROAD_INFO");
         userID=mAuth.getUid();
 
         checkMyBicycleLocation();
@@ -327,6 +330,45 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     @Override
                     public void onClick(View v) {
                         // 도로평가저장 DB
+                        roadRef.child("ROAD").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                int flag[] = new int[l];
+                                for (int i = 0; i < l; i++) flag[i] = 0;
+
+
+                                for (DataSnapshot data : dataSnapshot.getChildren()) {
+
+                                    RoadInfoItem model = data.getValue(RoadInfoItem.class);
+
+                                    for (int i = 0; i < arr.length - 1; i++) {
+                                        if (model.getStartLat() ==arr[i].getLatitude()&&model.getStartLon()==arr[i].getLongitude()&&model.getFinishLat()==arr[i+1].getLatitude() && model.getFinishLon()
+                                                == arr[i + 1].getLongitude()&&sarr[i]!=0) {
+                                            //토탈 정보 가져와서 계산 후 디비에 입력
+                                            RoadInfoItem temp = new RoadInfoItem(model.getStartLat(),model.getStartLon(),model.getFinishLat(),model.getStartLon(),model.getTotal_rate()+sarr[i],model.getTotal_user()+1);
+                                            data.getRef().setValue(temp);
+                                            flag[i] = 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                //flag =1 이면 도로정보 수정 완료 flag =0이면 db에 새로 넣어야함
+
+                                for (int i = 0; i < arr.length - 1; i++) {
+                                    if (flag[i] == 0&&sarr[i]!=0) {//데이터 없을 때
+                                        RoadInfoItem item = new RoadInfoItem(arr[i].getLatitude(),arr[i].getLongitude(), arr[i + 1].getLatitude(),arr[i+1].getLongitude(),sarr[i], 1);
+                                        roadRef.child("ROAD").push().setValue(item);  }
+                                }
+
+                            }
+
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });;
+
 
                         dialog.setIndex(1);
                         for(int i=0;i<arr.length-1;i++){
