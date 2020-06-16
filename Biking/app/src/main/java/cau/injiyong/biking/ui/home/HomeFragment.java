@@ -1377,47 +1377,76 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         double latDiff = LatitudeInDifference(distance / 2); // 위도차 (+, -)
         double lonDiff = LongitudeInDifference(midPoint.getLatitude(), distance / 2); // 경도차 (+, -)
 
-        double latMin = midPoint.getLatitude() - latDiff;
-        double latMax = midPoint.getLatitude() + latDiff;
-        double lonMin = midPoint.getLongitude() - lonDiff;
-        double lonMax = midPoint.getLongitude() + lonDiff;
+        final double latMin = midPoint.getLatitude() - latDiff;
+        final double latMax = midPoint.getLatitude() + latDiff;
+        final double lonMin = midPoint.getLongitude() - lonDiff;
+        final double lonMax = midPoint.getLongitude() + lonDiff;
 
         //
-        TMapCircle tCircle2 = new TMapCircle();
-        tCircle2.setCenterPoint(midPoint);
-        tCircle2.setRadius(distance / 2);
-        tCircle2.setCircleWidth(2);
-        tCircle2.setLineColor(Color.RED);
-        tCircle2.setAreaColor(Color.GRAY);
-        tCircle2.setAreaAlpha(100);
-        tCircle2.setRadiusVisible(true);
-        tmapview.addTMapCircle("midCircle", tCircle2);
+//        TMapCircle tCircle2 = new TMapCircle();
+//        tCircle2.setCenterPoint(midPoint);
+//        tCircle2.setRadius(distance / 2);
+//        tCircle2.setCircleWidth(2);
+//        tCircle2.setLineColor(Color.RED);
+//        tCircle2.setAreaColor(Color.GRAY);
+//        tCircle2.setAreaAlpha(100);
+//        tCircle2.setRadiusVisible(true);
+//        tmapview.addTMapCircle("midCircle", tCircle2);
         //
 
+        roadRef.child("ROAD").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int index = 0;
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    RoadInfoItem model = data.getValue(RoadInfoItem.class);
 
-        double startLat, startLon;
-        double endLat, endLon;
-        // for 문 내부
+                    double startLat, startLon;
+                    double endLat, endLon;
+                    double score;
 
-        startLat = 37.5036121; // DB roadStart
-        startLon = 126.9575017; // DB roadStart
-        endLat = 37.50894722480872; // DB roadEnd
-        endLon = 126.96383231865222; // DB roadEnd
+                    startLat = model.getStartLat(); // DB roadStart
+                    startLon = model.getStartLon(); // DB roadStart
+                    endLat = model.getFinishLat(); // DB roadEnd
+                    endLon = model.getFinishLon(); // DB roadEnd
+                    score = model.getTotal_rate() / model.getTotal_user();
 
-        if (startLat > latMin && startLat < latMax && startLon > lonMin && startLon < lonMax) {
-            if (endLat > latMin && endLat < latMax && endLon > lonMin && endLon < lonMax) {
-                TMapPolyLine goodRoad = new TMapPolyLine();
-                goodRoad.setLineColor(Color.GREEN);
-                goodRoad.setLineColor(Color.alpha(120));
-                goodRoad.setOutLineColor(Color.GREEN);
-                goodRoad.setLineWidth(1);
-                goodRoad.addLinePoint(new TMapPoint(startLat, startLon));
-                goodRoad.addLinePoint(new TMapPoint(startLat, startLon));
-                //goodRoad.addLinePoint(roadStart);
-                //goodRoad.addLinePoint(roadEnd);
-                tmapview.addTMapPolyLine("goodRoad" + 0, goodRoad);
+                    if (startLat > latMin && startLat < latMax && startLon > lonMin && startLon < lonMax) {
+                        if (endLat > latMin && endLat < latMax && endLon > lonMin && endLon < lonMax) {
+                            if (score >= 4) {
+                                TMapPolyLine goodRoad = new TMapPolyLine();
+                                goodRoad.setLineColor(Color.GRAY);
+                                goodRoad.setLineAlpha(100);
+                                goodRoad.setOutLineColor(Color.GREEN);
+                                goodRoad.setOutLineWidth(10);
+                                goodRoad.setLineWidth(14);
+                                goodRoad.addLinePoint(new TMapPoint(startLat, startLon));
+                                goodRoad.addLinePoint(new TMapPoint(endLat, endLon));
+                                tmapview.addTMapPolyLine("goodRoad" + index++, goodRoad);
+                            }
+
+                            if (score <= 2) {
+                                TMapPolyLine badRoad = new TMapPolyLine();
+                                badRoad.setLineColor(Color.GRAY);
+                                badRoad.setLineAlpha(100);
+                                badRoad.setOutLineColor(Color.YELLOW);
+                                badRoad.setOutLineWidth(10);
+                                badRoad.setLineWidth(14);
+                                badRoad.addLinePoint(new TMapPoint(startLat, startLon));
+                                badRoad.addLinePoint(new TMapPoint(endLat, endLon));
+                                tmapview.addTMapPolyLine("badRoad" + index++, badRoad);
+                            }
+                        }
+                    }
+
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
     }
 
 }
