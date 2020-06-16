@@ -199,6 +199,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         myRef = database.getReference("USER_ID");
         userID=mAuth.getUid();
 
+        checkMyBicycleLocation();
+
         /* 주변검색 버튼 */
         final EditText searchEditText = (EditText) rootView.findViewById(R.id.search_edit);
         ImageButton button_myBicycle = (ImageButton) rootView.findViewById(R.id.btn_myBicycle);
@@ -772,6 +774,40 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         builder.show();
 
     }
+
+
+    /*주차위치 확인 메소드*/
+    public void checkMyBicycleLocation(){
+
+        //자전거 주차 위치 확인
+        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
+                String lat = String.valueOf(dataSnapshot.child("PARKING").child("latitude").getValue());
+                String lon = String.valueOf(dataSnapshot.child("PARKING").child("longitude").getValue());
+
+                if (!lat.equals("null")) {//데이터 있을 떄
+                    TMapPoint point = new TMapPoint(Double.valueOf(lat),Double.valueOf(lon));
+                    TMapMarkerItem markerBicycle = new TMapMarkerItem();
+                    Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.bicycle_icon);
+                    markerBicycle.setIcon(bitmap); // 마커 아이콘 지정
+                    markerBicycle.setPosition(0.5f, 1.0f); // 마커의 중심점을 중앙, 하단으로 설정
+                    markerBicycle.setTMapPoint(point); // 마커의 좌표 지정
+                    markerBicycle.setName("내 자전거 위치"); // 마커의 타이틀 지정
+                    markerBicycle.setVisible(TMapMarkerItem.VISIBLE);
+                    tmapview.addMarkerItem("markerBicycle", markerBicycle); // 지도에 마커 추가
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });;
+
+    }
+
+
 
     /* 주변 검색 메소드 */
     public void SearchAround(final String strData) {
