@@ -275,6 +275,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 }
 
                 final Button [] button = new Button[arr.length-1];
+                final int l = arr.length-1;
+                final CustomDialog dialog = new CustomDialog(l);
 
                 for(int k=0; k<arr.length - 1; k++){
                     final int a=k;
@@ -284,14 +286,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     button[a].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(getActivity().getApplicationContext(),"Toast. ", Toast.LENGTH_SHORT).show();
+
                             // 데이터를 다이얼로그로 보내는 코드
                             Bundle args = new Bundle();
                             args.putString("key", "value");
                             //---------------------------------------.//
-                            CustomDialog dialog = new CustomDialog();
+
+                            dialog.setIndex(a);
                             dialog.setArguments(args); // 데이터 전달
                             dialog.show(getActivity().getSupportFragmentManager(),"tag");
+//                            Toast.makeText(getActivity().getApplicationContext(),"rating. "+ratings[a], Toast.LENGTH_SHORT).show();
 
                             TMapPoint point1 = arr[a];
                             TMapPoint point2 = arr[a+1];
@@ -324,12 +328,14 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         }
                         button_start.setVisibility(View.GONE);
                         button_end_review.setVisibility(View.GONE);
+
                     }
                 });
                 layout.addView(button_end_review);
 
 
             }});
+
 
         itemInfoList = new ArrayList<HashMap<String,String>>();
         accidentProneAreaList = new ArrayList<TMapPoint>();
@@ -709,6 +715,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         /* 체킹 변수 설정*/
         isBtnClickStart = false;
         isReset = false;
+        tmapview.removeTMapPath();
     }
 
     /* 지도 설정 */

@@ -2,7 +2,9 @@ package cau.injiyong.biking;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +25,45 @@ import androidx.fragment.app.Fragment;
 public class CustomDialog extends DialogFragment {
 
     private Fragment fragment;
+    public float [] starNum;
+    int l;
+    int a;
+    float rating;
 
-    public CustomDialog() {
+
+    public CustomDialog(int l) {
+        this.l=l;
+        this.starNum=new float[l];
     }
+
+    public void setIndex(int a){
+        this.a = a;
+    }
+
+    public void setNum(int a,float sn){
+        starNum[a]=sn;
+    }
+
+
+
+    SharedPreferences sc;
+    SharedPreferences.Editor editor;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
         final RatingBar rb = (RatingBar)view.findViewById(R.id.ratingBarInficator);
+
+//        sc= PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+//        final float ratings = sc.getFloat("numStars"+a, 0f);
+//        rb.setRating(3);
+
+
         rb.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-
+//                editor = sc.edit();
+//                editor.putFloat("numStars"+a, ratings);
+//                editor.commit();
             }
         });
         final Button okButton = (Button)view.findViewById(R.id.okButton);
@@ -42,13 +72,21 @@ public class CustomDialog extends DialogFragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                float sn = rb.getRating(); // 별점
+                setNum(a,sn);
+                // Toast.makeText(getActivity().getApplicationContext(),"별점 :"+sn, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(),"별점 :"+sn+"//index :"+a, Toast.LENGTH_SHORT).show();
                 dismiss();
+                rb.setRating(3);
             }
         });
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
+                for(int i=0;i<l;i++){
+                    Toast.makeText(getActivity().getApplicationContext(),"별점 :"+starNum[i]+"//index :"+i, Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         Bundle args = getArguments();
@@ -63,6 +101,7 @@ public class CustomDialog extends DialogFragment {
         //dialog.show(getActivity().getSupportFragmentManager(),"tag");
         fragment = getActivity().getSupportFragmentManager().findFragmentByTag("tag");
 
+
         // 아래 코드는 버튼 이벤트 안에 넣어야겠죠?
 //        if (fragment != null) {
 //            DialogFragment dialogFragment = (DialogFragment) fragment;
@@ -72,50 +111,15 @@ public class CustomDialog extends DialogFragment {
 
     }
 
+    public float getRate(int a){
+        return starNum[a];
+    }
+
+
     public void onClick(View v){
         dismiss();
     }
 
-//    // 호출할 다이얼로그 함수를 정의한다.
-//    public void callFunction() {
-//
-//        // 커스텀 다이얼로그를 정의하기위해 Dialog클래스를 생성한다.
-//        final Dialog dlg = new Dialog(context);
-//
-//        // 액티비티의 타이틀바를 숨긴다.
-//        dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//
-//        // 커스텀 다이얼로그의 레이아웃을 설정한다.
-//        dlg.setContentView(R.layout.custom_dialog);
-//
-//        // 커스텀 다이얼로그를 노출한다.
-//        dlg.show();
-//
-//        // 커스텀 다이얼로그의 각 위젯들을 정의한다.
-//
-//        final RatingBar ratingBarInficator = (RatingBar) dlg.findViewById(R.id.ratingBarInficator);
-//        final Button okButton = (Button) dlg.findViewById(R.id.okButton);
-//        final Button cancelButton = (Button) dlg.findViewById(R.id.cancelButton);
-//
-//        okButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//
-//                // 커스텀 다이얼로그를 종료한다.
-//                dlg.dismiss();
-//            }
-//        });
-//        cancelButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //Toast.makeText(context, "취소 했습니다.", Toast.LENGTH_SHORT).show();
-//
-//                // 커스텀 다이얼로그를 종료한다.
-//                dlg.dismiss();
-//            }
-//        });
-//    }
-}
 
+}
 
