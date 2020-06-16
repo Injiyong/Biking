@@ -45,6 +45,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.skt.Tmap.TMapCircle;
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapGpsManager;
 import com.skt.Tmap.TMapMarkerItem;
@@ -117,11 +118,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     private boolean isBtnClickStart;
     private Handler time_handler;
     int timer;
+    int t;
     CalDistance calDistance;
     double avg_speed;
     double bef_lat;
     double bef_long;
     double sum_dist;
+    double dist;
     double cur_lat;
     double cur_long;
     double getSpeed;
@@ -330,7 +333,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         itemInfoList = new ArrayList<HashMap<String,String>>();
         accidentProneAreaList = new ArrayList<TMapPoint>();
-        AccidentProneArea();
+        for (int i = 0; i < guList.length; i++) AccidentProneArea(guList[i]);
 
 
         tmapview.setOnCalloutRightButtonClickListener(new TMapView.OnCalloutRightButtonClickCallback() {
@@ -351,6 +354,27 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             @Override
             public void onClick(View view) {
 
+                System.out.println("accident size : " + accidentProneAreaList.size());
+                for (int i = 0; i < accidentProneAreaList.size(); i++) {
+
+                    TMapCircle tCircle = new TMapCircle();
+                    tCircle.setCenterPoint(accidentProneAreaList.get(i));
+                    tCircle.setRadius(100);
+                    tCircle.setCircleWidth(2);
+                    tCircle.setLineColor(Color.RED);
+                    tCircle.setAreaColor(Color.GRAY);
+                    tCircle.setAreaAlpha(100);
+                    tCircle.setRadiusVisible(true);
+                    tmapview.addTMapCircle("dangerCircle" + i, tCircle);
+
+                    TMapMarkerItem markerItem = new TMapMarkerItem();
+                    Bitmap startride = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.danger_icon);
+                    markerItem.setIcon(startride); // 마커 아이콘 지정
+                    markerItem.setPosition(0.5f, 0.5f); // 마커의 중심점을 중앙, 하단으로 설정
+                    markerItem.setTMapPoint(accidentProneAreaList.get(i)); // 마커의 좌표 지정
+                    markerItem.setName("turnType"); // 마커의 타이틀 지정
+                    tmapview.addMarkerItem("markerItem" + i, markerItem); // 지도에 마커 추가
+                }
 
                 if (view.getId() == R.id.btn_timer_start) {
 
@@ -623,35 +647,40 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         Toast.makeText(getActivity(), "주행을 종료합니다.", Toast.LENGTH_SHORT).show();
 
 
-                        /*firebase database 주행 기록 보내기*/
+        /*firebase database 주행 기록 보내기*/
 
-                        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        t=timer;
+        dist=sum_dist;
 
-                                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
-                                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
-                                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
+        myRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                if (total_dist.equals("null")) {//데이터 없을 때
-                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist);
-                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer);
-                                }
-                                else{//데이터 있으면 최근 기록과 더해서 update
-                                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(sum_dist+Float.parseFloat(total_dist));
-                                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(timer+Integer.parseInt(total_time));
-                                }
-                            }
+                //누적 주행 기록 가져오는 부분 (주행 기록 없으면 "null" 반환)
+                total_dist= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행거리").getValue());
+                total_time= String.valueOf(dataSnapshot.child("TOTAL_INFO").child("총주행시간").getValue());
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });;
+                if (total_dist.equals("null")) {//데이터 없을 때
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(dist);
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(t);
+                }
+                else{//데이터 있으면 최근 기록과 더해서 update
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행거리").setValue(dist+Float.parseFloat(total_dist));
+                    myRef.child(userID).child("TOTAL_INFO").child("총주행시간").setValue(t+Integer.parseInt(total_time));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });;
 
 
-                        //최근 주행 기록 정보 넘기는 부분
-                        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(sum_dist),String.valueOf(timer),s_adress,f_adress);
-                        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
+        //최근 주행 기록 정보 넘기는 부분
+        RecentInformationItem item = new RecentInformationItem(s_time,f_time,s_lat,s_long,f_lat,f_long,String.valueOf(dist),String.valueOf(t),s_adress,f_adress);
+        myRef.child(userID).child("RECENT_INFO").push().setValue(item);
+
 
         //btn_timer_start.setText("주행시작");
         //Toast.makeText(getActivity(), "타이머를 리셋합니다.", Toast.LENGTH_SHORT).show();
@@ -1027,15 +1056,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
     private List<HashMap<String,String>> itemInfoList = null;
     private List<TMapPoint> accidentProneAreaList = null;
+    private final String[] guList = {"680", "740", "305", "500", "620", "215", "530", "545", "350",
+            "320", "230", "590", "440", "410", "650", "200", "290", "710", "470", "560", "170", "380", "110", "140", "260"};
 
-    public void AccidentProneArea() {
+    public void AccidentProneArea(final String gu) {
 
         new Thread(new Runnable() { @Override public void run() {
-
             String jsonString = null;
             try {
                 // Open the connection
-                URL url = new URL("https://taas.koroad.or.kr/data/rest/frequentzone/bicycle?authKey=A2dS3DpItXF3S5gPqVobiUS6c1BPlYE%2BSJk1%2B1F2DjfDJCz24uWg0AuL%2FIlQAU4W&searchYearCd=2018&Sido=11&gugun=410&type=json");
+                URL url = new URL("https://taas.koroad.or.kr/data/rest/frequentzone/bicycle?authKey=A2dS3DpItXF3S5gPqVobiUS6c1BPlYE%2BSJk1%2B1F2DjfDJCz24uWg0AuL%2FIlQAU4W&searchYearCd=2018&Sido=11&gugun=" + gu + "&type=json");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 InputStream is = conn.getInputStream();
@@ -1113,8 +1143,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 Log.d(TAG, e.toString() );
             }
 
-            HashMap<String, String> m = itemInfoList.get(0);
-            System.out.println("accident loc : " + m.get("lo_crd") + " lat : " + m.get("la_crd"));
+            // HashMap<String, String> m = itemInfoList.get(0);
+            // System.out.println("accident loc : " + m.get("lo_crd") + " lat : " + m.get("la_crd"));
 
         } }).start();
     }
