@@ -317,7 +317,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     });
                     layout.addView(button[a]);
                 }
+                final float [] sarr = new float [l];
                 final Button button_end_review = new Button(getActivity().getApplicationContext());
+                //button_end_review.setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btncolor));
                 button_end_review.setText("평가 종료");
                 button_end_review.setTextColor(Color.parseColor("#2c3e50"));
                 button_end_review.setOnClickListener(new View.OnClickListener() {
@@ -325,9 +327,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     public void onClick(View v) {
                         // 도로평가저장 DB
 
+                        dialog.setIndex(1);
                         for(int i=0;i<arr.length-1;i++){
                             button[i].setVisibility(View.GONE);
+                            sarr[i]=dialog.getNum(i);
+                            Toast.makeText(getActivity().getApplicationContext(),"rating. "+sarr[i], Toast.LENGTH_SHORT).show();
                         }
+
                         button_start.setVisibility(View.GONE);
                         button_end_review.setVisibility(View.GONE);
 

@@ -3,6 +3,9 @@ package cau.injiyong.biking;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -44,6 +47,11 @@ public class CustomDialog extends DialogFragment {
         starNum[a]=sn;
     }
 
+    public float getNum(int a){
+        float sc= starNum[a];
+        return sc;
+    }
+
 
 
     SharedPreferences sc;
@@ -52,6 +60,8 @@ public class CustomDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
         final RatingBar rb = (RatingBar)view.findViewById(R.id.ratingBarInficator);
+        LayerDrawable stars = (LayerDrawable) rb.getProgressDrawable();
+        stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
 
 //        sc= PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 //        final float ratings = sc.getFloat("numStars"+a, 0f);
@@ -64,6 +74,10 @@ public class CustomDialog extends DialogFragment {
 //                editor = sc.edit();
 //                editor.putFloat("numStars"+a, ratings);
 //                editor.commit();
+                if(rb.getRating()<0.5){
+                    rb.setRating((float)0.5);
+                    Toast.makeText(getActivity().getApplicationContext(),"최소 별점은 0.5개 입니다.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         final Button okButton = (Button)view.findViewById(R.id.okButton);
@@ -83,9 +97,11 @@ public class CustomDialog extends DialogFragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int i=0;i<l;i++){
-                    Toast.makeText(getActivity().getApplicationContext(),"별점 :"+starNum[i]+"//index :"+i, Toast.LENGTH_SHORT).show();
-                }
+//                for(int i=0;i<l;i++){
+//                    Toast.makeText(getActivity().getApplicationContext(),"별점 :"+starNum[i]+"//index :"+i, Toast.LENGTH_SHORT).show();
+//                }
+                rb.setRating(3);
+                dismiss();
 
             }
         });
@@ -116,10 +132,9 @@ public class CustomDialog extends DialogFragment {
     }
 
 
-    public void onClick(View v){
-        dismiss();
-    }
+//    public void onClick(View v){
+//        dismiss();
+//    }
 
 
 }
-
