@@ -185,6 +185,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
             tmapview.setTrackingMode(false); // 주행시작하면 다시 켜야함
             tmapview.setCenterPoint(startpath.getLongitude(), startpath.getLatitude());
             StartGuidance(startpath,destpath);
+            calculateCircle(startpath.getLatitude(), startpath.getLongitude(), destpath.getLatitude(), destpath.getLongitude());
             button_start.setVisibility(View.VISIBLE);
             startRide();
             startpath = null;
@@ -1275,4 +1276,106 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         if (cnt >= descripList.size() - 1) return cnt;
         return cnt++;
     }
+
+    //반경 m이내의 위도차(degree)
+    public double LatitudeInDifference(double diff){
+        //지구반지름
+        final int earth = 6371000;    //단위m
+
+        return (diff*360.0) / (2*Math.PI*earth);
+    }
+
+    //반경 m이내의 경도차(degree)
+    public double LongitudeInDifference(double _latitude, double diff){
+        //지구반지름
+        final int earth = 6371000;    //단위m
+
+        double ddd = Math.cos(0);
+        double ddf = Math.cos(Math.toRadians(_latitude));
+
+        return (diff*360.0) / (2*Math.PI*earth*Math.cos(Math.toRadians(_latitude)));
+    }
+
+    public TMapPoint MidPoint(double lat1, double lon1, double lat2, double lon2) {
+
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        //convert to radians
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+        lon1 = Math.toRadians(lon1);
+
+        double Bx = Math.cos(lat2) * Math.cos(dLon);
+        double By = Math.cos(lat2) * Math.sin(dLon);
+        double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+        double lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+        //print out in degrees
+        System.out.println(Math.toDegrees(lat3) + " " + Math.toDegrees(lon3));
+
+        return new TMapPoint(Math.toDegrees(lat3), Math.toDegrees(lon3));
+    }
+
+    public double TwoPointDistance(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+
+        double a = Math.pow(Math.sin(dLat / 2),2) + Math.pow(Math.sin(dLon / 2),2) * Math.cos(lat1) * Math.cos(lat2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return 6372.8 * c * 1000;
+    }
+
+
+    public void calculateCircle(double lat1, double lon1, double lat2, double lon2) {
+        TMapPoint midPoint = MidPoint(lat1, lon1, lat2, lon2);
+        double distance = TwoPointDistance(lat1, lon1, lat2, lon2);
+
+        double latDiff = LatitudeInDifference(distance / 2); // 위도차 (+, -)
+        double lonDiff = LongitudeInDifference(midPoint.getLatitude(), distance / 2); // 경도차 (+, -)
+
+        double latMin = midPoint.getLatitude() - latDiff;
+        double latMax = midPoint.getLatitude() + latDiff;
+        double lonMin = midPoint.getLongitude() - lonDiff;
+        double lonMax = midPoint.getLongitude() + lonDiff;
+
+        //
+        TMapCircle tCircle2 = new TMapCircle();
+        tCircle2.setCenterPoint(midPoint);
+        tCircle2.setRadius(distance / 2);
+        tCircle2.setCircleWidth(2);
+        tCircle2.setLineColor(Color.RED);
+        tCircle2.setAreaColor(Color.GRAY);
+        tCircle2.setAreaAlpha(100);
+        tCircle2.setRadiusVisible(true);
+        tmapview.addTMapCircle("midCircle", tCircle2);
+        //
+
+
+        double startLat, startLon;
+        double endLat, endLon;
+        // for 문 내부
+
+        startLat = 37.5036121; // DB roadStart
+        startLon = 126.9575017; // DB roadStart
+        endLat = 37.50894722480872; // DB roadEnd
+        endLon = 126.96383231865222; // DB roadEnd
+
+        if (startLat > latMin && startLat < latMax && startLon > lonMin && startLon < lonMax) {
+            if (endLat > latMin && endLat < latMax && endLon > lonMin && endLon < lonMax) {
+                TMapPolyLine goodRoad = new TMapPolyLine();
+                goodRoad.setLineColor(Color.GREEN);
+                goodRoad.setLineColor(Color.alpha(120));
+                goodRoad.setOutLineColor(Color.GREEN);
+                goodRoad.setLineWidth(1);
+                goodRoad.addLinePoint(new TMapPoint(startLat, startLon));
+                goodRoad.addLinePoint(new TMapPoint(startLat, startLon));
+                //goodRoad.addLinePoint(roadStart);
+                //goodRoad.addLinePoint(roadEnd);
+                tmapview.addTMapPolyLine("goodRoad" + 0, goodRoad);
+            }
+        }
+    }
+
 }
