@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import cau.injiyong.biking.CalDistance;
 import cau.injiyong.biking.Common.Common;
@@ -240,6 +242,20 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 SearchAround(searchText);
             }});
 
+        Button getlocation = (Button) rootView.findViewById(R.id.getlocation);
+        getlocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    tmapview.setLocationPoint(longitude, latitude);
+                    tmapview.setCenterPoint(longitude, latitude);
+
+                }
+            }
+        });
+
         ImageButton button_searchAround = (ImageButton) rootView.findViewById(R.id.btn_searchAround);
         button_searchAround.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -283,12 +299,16 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 final Button [] button = new Button[arr.length-1];
                 final int l = arr.length-1;
                 final CustomDialog dialog = new CustomDialog(l);
+//                DisplayMetrics dm = getResources().getDisplayMetrics();
+//                int size = Math.round(20*dm.density);
 
                 for(int k=0; k<arr.length - 1; k++){
                     final int a=k;
                     button[a] = new Button(getActivity().getApplicationContext());
+//                    button[a].setPadding(size,size,0,0);
                     button[a].setText("도로 "+String.valueOf(k+1));
                     button[a].setTextColor(Color.parseColor("#2c3e50"));
+//                    button[a].setBackground(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.btncustom));
                     button[a].setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -329,6 +349,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 button_end_review.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        tmapview.removeAllTMapPolyLine();
+                        tmapview.removeTMapPath();
                         // 도로평가저장 DB
                         roadRef.child("ROAD").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -363,7 +385,6 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                             }
 
 
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
                             }
@@ -374,7 +395,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                         for(int i=0;i<arr.length-1;i++){
                             button[i].setVisibility(View.GONE);
                             sarr[i]=dialog.getNum(i);
-                            Toast.makeText(getActivity().getApplicationContext(),"rating. "+sarr[i], Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getActivity().getApplicationContext(),"rating. "+sarr[i], Toast.LENGTH_SHORT).show();
                         }
 
                         button_start.setVisibility(View.GONE);
@@ -502,10 +523,13 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 timer++; // Timer 증가
 
                 /* Text View 갱신*/
-                tv_timer.setText("주행시간 : " + timer + " 초");
                 tv_distance.setText("주행거리 : "+sum_dist+ " km");
                 tv_avg_speed.setText("현재속도 : "+getSpeed +" km/h");
                 //tv_avg_speed.setText("평균속도 : "+avg_speed+" km/h");
+                if(timer<=59)
+                    tv_timer.setText("주행시간 : " + timer + "초");
+                else if(timer>=60)
+                    tv_timer.setText("주행시간 : " + timer/60 + "분 "+timer%60+"초");
 
                 /* 6초 마다 GPS를 찍기 위한 소스*/
                 if (timer % 6 == 0) {
@@ -1143,6 +1167,40 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
         // startRide();
         // ~~ 음성안내
+    }
+
+    public void voiceG(){
+        tts = new TextToSpeech(getActivity(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != ERROR) {
+                    // 언어를 선택한다.
+                    tts.setLanguage(Locale.KOREAN);
+                }
+            }
+        });
+        int i=0,j=0;
+        double latitude,longitude;
+
+        for(i=0;i<mapPoint.size();i++){
+            String lat=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
+            i++;
+            String lon=ObjToString(((Integer.valueOf(mapPoint.get(i).toString()))*10000)/10000);
+
+            while(true){
+                latitude = (location.getLatitude()*10000)/10000;
+                longitude = (location.getLongitude()*10000)/10000;
+                Log.d("voicelat", String.valueOf(latitude));
+                Log.d("voicelong", String.valueOf(longitude));
+                if(String.valueOf(latitude)==lat && String.valueOf(longitude)==lon){
+                    String descrip = ObjToString(descripList.get(j));
+                    j++;
+                    tts.speak(descrip,TextToSpeech.QUEUE_FLUSH, null);
+                    break;
+                }
+            }
+
+        }
     }
 
 

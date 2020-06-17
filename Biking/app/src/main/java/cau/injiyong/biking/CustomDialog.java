@@ -89,7 +89,7 @@ public class CustomDialog extends DialogFragment {
                 float sn = rb.getRating(); // 별점
                 setNum(a,sn);
                 // Toast.makeText(getActivity().getApplicationContext(),"별점 :"+sn, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity().getApplicationContext(),"별점 :"+sn+"//index :"+a, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity().getApplicationContext(),"별점 :"+sn+"//index :"+a, Toast.LENGTH_SHORT).show();
                 dismiss();
                 rb.setRating(3);
             }

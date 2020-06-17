@@ -266,6 +266,12 @@
 
                 </LinearLayout>
             </FrameLayout>
+        <Button
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/getlocation"
+            android:background="@drawable/ic_my_location"
+            android:layout_marginLeft="355dp"/>
 
             <Button
                 android:id="@+id/btn_demo"
@@ -276,6 +282,7 @@
                 android:textColor="#f1c40f"
                 android:backgroundTint="#2c3e50"
                 android:text="DEMO" />
+
 
 
         </FrameLayout>
