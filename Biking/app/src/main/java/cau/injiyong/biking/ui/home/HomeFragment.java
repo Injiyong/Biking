@@ -271,6 +271,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                 }
                 else {
                     searchAroundLayout.setVisibility(View.GONE);
+                    tmapview.removeAllMarkerItem();
+
                     if (tv_timer.getVisibility() == View.INVISIBLE) {
                         tv_timer.setVisibility(View.VISIBLE);
                         tv_distance.setVisibility(View.VISIBLE);
@@ -351,6 +353,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                     public void onClick(View v) {
                         tmapview.removeAllTMapPolyLine();
                         tmapview.removeTMapPath();
+                        tmapview.removeAllMarkerItem();
                         // 도로평가저장 DB
                         roadRef.child("ROAD").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -682,6 +685,9 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
 
     public void endRide(){
 
+        tmapview.removeAllTMapPolyLine();
+        tmapview.removeAllMarkerItem();
+
         btn_timer_start.setBackgroundResource(R.drawable.startride_icon);
         //GPS 저장
         // GpsInfo gps = new GpsInfo(getActivity());
@@ -791,6 +797,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         isBtnClickStart = false;
         isReset = false;
         tmapview.removeTMapPath();
+        tmapview.removeAllMarkerItem();
     }
 
     /* 지도 설정 */
@@ -798,19 +805,30 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
         tmapview.setSKTMapApiKey("l7xx3ce387d7e7764c70ba53c4cddb6391eb");
 
         CurrentMarker = new TMapMarkerItem();
+        final double lo = location.getLongitude();
+        final double la = location.getLatitude();
 
-        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_here);
-        tmapview.setIcon(bitmap);
-        tmapview.addMarkerItem("CurrentMarker", CurrentMarker);
-        tmapview.setIconVisibility(true);
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable()  {
+            public void run() {
+                Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.poi_here);
+                tmapview.setIcon(bitmap);
+                tmapview.addMarkerItem("CurrentMarker", CurrentMarker);
+                tmapview.setIconVisibility(true);
 
-        tmapview.setLanguage(TMapView.LANGUAGE_KOREAN);
-        tmapview.setZoomLevel(14);
-        tmapview.setMapType(TMapView.MAPTYPE_STANDARD);
-        tmapview.setCompassMode(true);
-        tmapview.setTrackingMode(true);
-        //tmapview.setLocationPoint(location.getLongitude(), location.getLatitude());
-        tmapview.setLocationPoint(126.985302, 37.570841);
+                tmapview.setLocationPoint(lo,la);
+
+                tmapview.setLanguage(TMapView.LANGUAGE_KOREAN);
+                tmapview.setZoomLevel(14);
+                tmapview.setMapType(TMapView.MAPTYPE_STANDARD);
+                tmapview.setCompassMode(true);
+                tmapview.setTrackingMode(true);
+            }
+        }, 500); // 0.5초후
+
+
+
+        //tmapview.setLocationPoint(126.985302, 37.570841);
     }
 
     /* 자전거 주차위치 메소드*/
@@ -886,8 +904,8 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
     public void SearchAround(final String strData) {
 
         TMapData tMapData = new TMapData();
-        //TMapPoint tPoint = tmapview.getLocationPoint();
-        TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
+        TMapPoint tPoint = tmapview.getLocationPoint();
+        //TMapPoint tPoint = new TMapPoint(37.570841, 126.985302);
         tMapData.findAroundNamePOI(tPoint, strData, 1, 5, new TMapData.FindAroundNamePOIListenerCallback() {
             @Override
             public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
@@ -1487,7 +1505,7 @@ public class HomeFragment extends Fragment implements TMapGpsManager.onLocationC
                                 TMapPolyLine badRoad = new TMapPolyLine();
                                 badRoad.setLineColor(Color.GRAY);
                                 badRoad.setLineAlpha(100);
-                                badRoad.setOutLineColor(Color.YELLOW);
+                                badRoad.setOutLineColor(Color.RED);
                                 badRoad.setOutLineWidth(10);
                                 badRoad.setLineWidth(14);
                                 badRoad.addLinePoint(new TMapPoint(startLat, startLon));
