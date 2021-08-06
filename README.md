@@ -15,7 +15,7 @@ People who commute by bicycle are abbreviated as "자출족." What is the first 
 
 <br>
 
-## 🚴‍♂️Functions
+## 🚴‍ Functions
 
 ### ✔ Shortest Distance Recommendation
 > Recommend and guide the shortest route
