@@ -1,12 +1,14 @@
-# Biking 
-![KakaoTalk_20210806_112346875](https://user-images.githubusercontent.com/56222478/128447513-06e6f5d4-b8b0-4501-bce6-fbec9c8cd704.png)
+<div align="center">
+  
+  ![KakaoTalk_20210806_112346875](https://user-images.githubusercontent.com/56222478/128447513-06e6f5d4-b8b0-4501-bce6-fbec9c8cd704.png)
+  <h1>Biking </h1>
 
-<p align="center">
-
-<img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=Android&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white" /></a></p>
-
+  <p align="center">
+    <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=Android&logoColor=white"/></a>
+    <img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=Firebase&logoColor=white"/></a>
+    <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white" /></a>
+  </p>
+</div>
 <br>
 
 ## 🚴‍♀️ Introduction
